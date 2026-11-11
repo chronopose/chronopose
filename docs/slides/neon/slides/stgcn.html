@@ -1,0 +1,92 @@
+<section id="stgcn" data-transition="fade" style="background:#05070D;color:#EEF4FF;font-family:'Manrope', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><radialGradient id="nAstgcn" cx="0.85" cy="0.2" r="0.55"><stop offset="0" stop-color="#2DE2FF" stop-opacity="0.16"/><stop offset="1" stop-color="#2DE2FF" stop-opacity="0"/></radialGradient><radialGradient id="nBstgcn" cx="0.05" cy="1" r="0.6"><stop offset="0" stop-color="#8B7CFF" stop-opacity="0.18"/><stop offset="1" stop-color="#8B7CFF" stop-opacity="0"/></radialGradient></defs><rect width="1920" height="1080" fill="url(#nAstgcn)"/><rect width="1920" height="1080" fill="url(#nBstgcn)"/><path d="M0 128H1920M0 256H1920M0 384H1920M0 512H1920M0 640H1920M0 768H1920M0 896H1920M0 1024H1920M128 0V1080M256 0V1080M384 0V1080M512 0V1080M640 0V1080M768 0V1080M896 0V1080M1024 0V1080M1152 0V1080M1280 0V1080M1408 0V1080M1536 0V1080M1664 0V1080M1792 0V1080" stroke="#7FB8FF" stroke-opacity="0.05" stroke-width="1" fill="none"/>
+<path d="M128 112H1792M128 968H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:262px;width:940px;height:600px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){var _SK=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){var s=this.strokeStyle,a=this.globalAlpha,w=this.lineWidth;if(typeof s!='string'||a<0.2)return _SK.apply(this,arguments);this.globalAlpha=a*0.16;this.lineWidth=w*3.4+3;_SK.apply(this,arguments);this.globalAlpha=a;this.lineWidth=w;return _SK.apply(this,arguments)};
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#2de2ff'){this.save();this.strokeStyle='#05070d';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=940,H=600,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#EEF4FF',OR='#2DE2FF',PA='#05070D';
+var E=[[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+function walk(p){
+var bob=-0.022*Math.abs(Math.sin(p)),P=[],sh=[0.03,-0.52+bob];
+function leg(ph,dx){var th=0.48*Math.sin(ph),fl=0.12+0.8*Math.max(0,Math.cos(ph)),h=[dx,bob],k=[h[0]+0.42*Math.sin(th),h[1]+0.42*Math.cos(th)];return[h,k,[k[0]+0.42*Math.sin(th-fl),k[1]+0.42*Math.cos(th-fl)]]}
+function arm(ph,dx){var a=0.5*Math.sin(ph),s=[sh[0]+dx,sh[1]],e=[s[0]+0.27*Math.sin(a),s[1]+0.27*Math.cos(a)];return[s,e,[e[0]+0.25*Math.sin(a+0.55),e[1]+0.25*Math.cos(a+0.55)]]}
+var L=leg(p,-0.05),R=leg(p+PI,0.05),A=arm(p+PI,-0.07),B=arm(p,0.07);
+P[5]=A[0];P[7]=A[1];P[9]=A[2];P[6]=B[0];P[8]=B[1];P[10]=B[2];P[11]=L[0];P[13]=L[1];P[15]=L[2];P[12]=R[0];P[14]=R[1];P[16]=R[2];
+P[4]=[(P[5][0]+P[6][0])/2+0.035,(P[5][1]+P[6][1])/2-0.235];return P}
+var U=215,DX=96,ZX=0.62,ZY=0.2,DY=-13,OX=92,OY=318,N=8;
+function pj(X,q){return[OX+X*DX+q[0]*U*ZX,OY+X*DY+q[1]*U+q[0]*U*ZY]}
+function frame(ms){var t=ms/1000,sc=t*0.5,fr=sc%1,base=Math.floor(sc),PS=[],AL=[];
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);x.lineCap='round';x.lineJoin='round';
+for(var k=0;k<=N;k++){PS[k]=walk((base+k)*0.66);AL[k]=k==0?1-fr:k==N?fr:1}
+/* sheets */
+for(var k=0;k<=N;k++){var X=k-fr,a=pj(X,[-0.52,-0.93]),b=pj(X,[0.52,-0.93]),d=pj(X,[0.52,0.9]),e=pj(X,[-0.52,0.9]);x.globalAlpha=AL[k]*0.3;x.strokeStyle=INK;x.lineWidth=1.5;x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.lineTo(d[0],d[1]);x.lineTo(e[0],e[1]);x.closePath();x.stroke()}
+/* temporal edges */
+x.strokeStyle=OR;x.lineWidth=2;
+for(var k=0;k<N;k++){x.globalAlpha=Math.min(AL[k],AL[k+1])*0.6;x.beginPath();for(var j=5;j<17;j++){var a=pj(k-fr,PS[k][j]),b=pj(k+1-fr,PS[k+1][j]);x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1])}x.stroke()}
+/* skeletons */
+for(var k=0;k<=N;k++){var X=k-fr,P=PS[k];x.globalAlpha=AL[k];x.strokeStyle=INK;x.lineWidth=3;x.beginPath();
+for(var i=0;i<12;i++){var a=pj(X,P[E[i][0]]),b=pj(X,P[E[i][1]]);x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1])}
+var n=pj(X,[(P[5][0]+P[6][0])/2,(P[5][1]+P[6][1])/2]),h=pj(X,P[4]);x.moveTo(n[0],n[1]);x.lineTo(h[0],h[1]+20);x.stroke();x.beginPath();x.ellipse(h[0],h[1],0.1*U*ZX+5,0.1*U,0,0,6.283);x.stroke();
+x.fillStyle=INK;for(var j=5;j<17;j++){var q=pj(X,P[j]);x.beginPath();x.arc(q[0],q[1],4.5,0,6.283);x.fill()}}
+x.globalAlpha=1;
+/* kernel */
+var kc=4,jc=[10,16,9,15,6,13][Math.floor(t/1.7)%6],Xc=kc-fr,ctr=pj(Xc,PS[kc][jc]),NB=[];
+for(var i=0;i<12;i++){if(E[i][0]==jc)NB.push(pj(Xc,PS[kc][E[i][1]]));if(E[i][1]==jc)NB.push(pj(Xc,PS[kc][E[i][0]]))}
+NB.push(pj(Xc-1,PS[kc-1][jc]));NB.push(pj(Xc+1,PS[kc+1][jc]));
+var pu=0.5+0.5*Math.sin(t*5);x.strokeStyle=OR;x.lineWidth=6;x.beginPath();for(var i=0;i<NB.length;i++){x.moveTo(ctr[0],ctr[1]);x.lineTo(NB[i][0],NB[i][1])}x.stroke();
+x.fillStyle=OR;for(var i=0;i<NB.length;i++){x.beginPath();x.arc(NB[i][0],NB[i][1],9,0,6.283);x.fill()}
+x.beginPath();x.arc(ctr[0],ctr[1],13,0,6.283);x.fill();x.lineWidth=3;x.globalAlpha=0.7-pu*0.5;x.beginPath();x.arc(ctr[0],ctr[1],20+pu*16,0,6.283);x.stroke();x.globalAlpha=1;
+/* time axis */
+x.strokeStyle=INK;x.lineWidth=2.5;x.beginPath();x.moveTo(40,566);x.lineTo(W-30,566);x.moveTo(W-46,556);x.lineTo(W-30,566);x.lineTo(W-46,576);x.stroke();
+for(var k=0;k<=N;k++){var tx=OX+(k-fr)*DX;if(tx>44&&tx<W-60){x.beginPath();x.moveTo(tx,566);x.lineTo(tx,554);x.stroke()}}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#EEF4FF">Пл. 12 — Методы</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#EEF4FF">12 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Unbounded', Arial, sans-serif;font-size:56px;font-weight:800;line-height:1.08;letter-spacing:-1px;color:#EEF4FF">ST-GCN: скелет как граф во времени</h2>
+<div style="position:absolute;left:128px;top:872px;width:940px;display:flex;flex-direction:row;gap:36px;align-items:center">
+<div style="display:flex;flex-direction:row;gap:12px;align-items:center"><div style="width:44px;height:6px;background:#0E1B38;border:1px solid rgba(45,226,255,0.45)"></div><p style="font-size:26px;font-weight:600;color:#EEF4FF">кости — связи в кадре</p></div>
+<div style="display:flex;flex-direction:row;gap:12px;align-items:center"><div style="width:44px;height:6px;background:rgba(45,226,255,0.13);border:2px solid #2DE2FF"></div><p style="font-size:26px;font-weight:600;color:#EEF4FF">тот же сустав в соседних кадрах</p></div>
+</div>
+<div data-build-in="left 1 auto" style="position:absolute;left:1132px;top:276px;width:660px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:14px 0px 0px 0px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B9ADFF">ВХОД МОДЕЛИ</p>
+<p style="font-family:'Unbounded', Arial, sans-serif;font-size:65px;font-weight:800;line-height:1.08;white-space:nowrap;color:#EEF4FF">3 × 30 × 17</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">каналы (x, y, уверенность) × кадры за 2 с × суставы</p>
+</div>
+<div data-build-in="left 2 auto" style="position:absolute;left:1132px;top:540px;width:660px;display:flex;flex-direction:column;gap:14px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:14px 0px 0px 0px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B9ADFF">ТОЧНОСТЬ, NTU RGB+D 60, X-SUB</p>
+<div style="display:flex;flex-direction:row;align-items:center;gap:16px">
+<p style="width:210px;font-size:26px;font-weight:600;color:#EEF4FF">ST-GCN, 2018</p>
+<div style="width:244px;height:30px;background:rgba(45,226,255,0.13);border:2px solid #2DE2FF"></div>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:33px;font-weight:800;line-height:1.08;white-space:nowrap;color:#EEF4FF">81,5 %</p>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:16px">
+<p style="width:210px;font-size:26px;font-weight:600;color:#EEF4FF">2s-AGCN, 2019</p>
+<div style="width:265px;height:30px;background:#0E1B38;border:1px solid rgba(45,226,255,0.45)"></div>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:31px;font-weight:800;line-height:1.08;white-space:nowrap;color:#EEF4FF">88,5 %</p>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:16px">
+<p style="width:210px;font-size:26px;font-weight:600;color:#EEF4FF">CTR-GCN, 2021</p>
+<div style="width:277px;height:30px;background:#0E1B38;border:1px solid rgba(45,226,255,0.45)"></div>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:31px;font-weight:800;line-height:1.08;white-space:nowrap;color:#EEF4FF">92,4 %</p>
+</div>
+</div>
+<p data-build-in="fade 3 auto" style="position:absolute;left:1132px;top:806px;width:660px;font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF"><b>В проекте:</b> ST-GCN — основная модель, случайный лес и GRU — базовые линии. Главная метрика — Macro-F1.</p>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ФИГ. 12 — ЯДРО СВЁРТКИ НА ГРАФЕ · AAAI 2018, ICCV 2021</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

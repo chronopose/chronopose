@@ -1,0 +1,67 @@
+<section id="architecture" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grO" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="61"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grO)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 17 — Система и ТЗ</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">17 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">Архитектура системы</h2>
+<div data-build-in="rise 1 auto" style="position:absolute;left:228px;top:276px;width:1564px;height:112px;display:flex;flex-direction:row;align-items:center;gap:20px;border-top:2px solid #0E0E0C">
+<p style="width:300px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Источники</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Камера 1</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Камера 2</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Камера 3</p>
+<p style="font-size:26px;font-weight:600;color:#EFEBE1;background:#1B2FE0;border:2px solid #1B2FE0;padding:12px 18px 12px 18px">Телефоны + ESP32</p>
+</div>
+<div data-build-in="rise 2 auto" style="position:absolute;left:228px;top:388px;width:1564px;height:112px;display:flex;flex-direction:row;align-items:center;gap:20px;border-top:2px solid #0E0E0C">
+<p style="width:300px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Обработка</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Поток камеры: поза → локальный трек</p>
+<p style="font-size:26px;font-weight:600;color:#EFEBE1;background:#1B2FE0;border:2px solid #1B2FE0;padding:12px 18px 12px 18px">MQTT → окна сигнала</p>
+</div>
+<div data-build-in="rise 3 auto" style="position:absolute;left:228px;top:500px;width:1564px;height:112px;display:flex;flex-direction:row;align-items:center;gap:20px;border-top:2px solid #0E0E0C">
+<p style="width:300px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Модели</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Глобальный идентификатор</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">ST-GCN</p>
+<p style="font-size:26px;font-weight:600;color:#EFEBE1;background:#1B2FE0;border:2px solid #1B2FE0;padding:12px 18px 12px 18px">1D-CNN</p>
+</div>
+<div data-build-in="rise 4 auto" style="position:absolute;left:228px;top:612px;width:1564px;height:112px;display:flex;flex-direction:row;align-items:center;gap:20px;border-top:2px solid #0E0E0C">
+<p style="width:300px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Решение</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Синхронизация и слияние</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Движок событий</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;background:#F23D00;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Генератор оповещений</p>
+</div>
+<div data-build-in="rise 5 auto" style="position:absolute;left:228px;top:724px;width:1564px;height:112px;display:flex;flex-direction:row;align-items:center;gap:20px;border-top:2px solid #0E0E0C;border-bottom:2px solid #0E0E0C">
+<p style="width:300px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Выдача</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">PostgreSQL</p>
+<p style="font-size:26px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">FastAPI + WebSocket</p>
+<p style="font-size:26px;font-weight:600;color:#EFEBE1;background:#0E0E0C;border:2px solid #0E0E0C;padding:12px 18px 12px 18px">Сайт и демо-панель</p>
+</div>
+<p data-build-in="fade 6 auto" style="position:absolute;left:228px;top:860px;width:1564px;font-size:28px;font-weight:600;line-height:1.25;color:#0E0E0C">Правило: отказ одной камеры или датчика не останавливает остальные потоки.</p>
+<x-embed style="position:absolute;left:128px;top:276px;width:84px;height:560px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=84,H=560,S=1;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+function frame(ms){var t=ms/1000;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.strokeStyle='#0E0E0C';x.lineWidth=3;x.beginPath();x.moveTo(42,20);x.lineTo(42,540);x.stroke();
+for(var i=0;i<5;i++){var cy=56+i*112;x.fillStyle='#EFEBE1';x.lineWidth=3.5;x.beginPath();x.arc(42,cy,20,0,6.283);x.fill();x.stroke()}
+x.lineCap='round';x.lineJoin='round';x.lineWidth=5;
+for(var k=0;k<5;k++){var u=((t*0.28+k/5)%1),py=20+u*520,nr=false;for(var i=0;i<5;i++)if(Math.abs(py-(56+i*112))<24)nr=true;x.fillStyle='#F23D00';x.beginPath();x.arc(42,py,nr?12:8,0,6.283);x.fill()}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ФИГ. 17 — СЛОИ СИСТЕМЫ; СИНИМ — КОНТУР IOT</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

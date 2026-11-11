@@ -1,0 +1,78 @@
+{
+  "v": 4,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-10T12:00:00Z"
+  },
+  "lists": "css",
+  "title": "Детекция ключевых точек и классификация поведения в КФС — Neon",
+  "cover": "cover",
+  "order": [
+    "cover",
+    "problem",
+    "relevance",
+    "republic",
+    "republic-link",
+    "goal",
+    "scope",
+    "pipeline",
+    "pose",
+    "faces",
+    "tracking",
+    "stgcn",
+    "crowd",
+    "iot",
+    "fusion",
+    "events",
+    "architecture",
+    "tz",
+    "kpi",
+    "tracks",
+    "wbs-nir",
+    "wbs-site",
+    "team",
+    "matrix",
+    "roadmap",
+    "experiments",
+    "risks",
+    "results",
+    "final"
+  ],
+  "sections": {
+    "s1": {
+      "description": "Постановка: тема, проблема, актуальность, цель и границы проекта",
+      "start": "cover"
+    },
+    "s2": {
+      "description": "Методы: от ключевых точек к семантическим оповещениям",
+      "start": "pipeline"
+    },
+    "s3": {
+      "description": "Архитектура, техническое задание и целевые показатели",
+      "start": "architecture"
+    },
+    "s4": {
+      "description": "Два трека работ, роли в команде и дорожная карта",
+      "start": "tracks"
+    },
+    "s5": {
+      "description": "Эксперименты, риски и ожидаемые результаты",
+      "start": "experiments"
+    }
+  },
+  "faces": {
+    "unbounded": {
+      "family": "Unbounded",
+      "href": "https://fonts.googleapis.com/css2?family=Unbounded:wght@400..900&display=swap"
+    },
+    "manrope": {
+      "family": "Manrope",
+      "href": "https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&display=swap"
+    },
+    "jetbrains-mono": {
+      "family": "JetBrains Mono",
+      "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..800&display=swap"
+    }
+  },
+  "designSystems": []
+}

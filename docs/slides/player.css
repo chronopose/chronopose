@@ -1,0 +1,51 @@
+/* Проигрыватель слайдов: холст 1920×1080 масштабируется под окно с полями */
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+body { font-family: Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+#viewport { position: fixed; inset: 0; overflow: hidden; touch-action: pan-y; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; }
+
+/* Базовые стили формата слайдов (как в редакторе) */
+#stage .slide { position: absolute; inset: 0; }
+#stage section { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column; }
+#stage * { box-sizing: border-box; }
+#stage h1, #stage h2, #stage h3, #stage p, #stage ul, #stage ol { margin: 0; }
+#stage h1 { font-size: 96px; font-weight: 600; line-height: 1.1; }
+#stage h2 { font-size: 64px; font-weight: 600; line-height: 1.15; }
+#stage h3 { font-size: 44px; font-weight: 600; line-height: 1.2; }
+#stage p, #stage li { font-size: 32px; font-weight: 400; line-height: 1.4; }
+#stage div { display: flex; flex-direction: column; }
+#stage table { border-collapse: collapse; }
+#stage iframe { border: 0; background: transparent; }
+
+/* Смена слайдов */
+.slide { transition: opacity .5s ease, translate .6s cubic-bezier(.2, .7, .2, 1); }
+.slide.enter-fade { opacity: 0; }
+.slide.enter-push { translate: 100% 0; }
+.slide.leave-push { translate: -30% 0; opacity: 0; }
+.slide.leave-fade { opacity: 0; }
+
+/* Анимации появления: translate/scale не конфликтуют с transform из слайда */
+.bi { transition: opacity .55s ease, translate .65s cubic-bezier(.2, .7, .2, 1), scale .55s cubic-bezier(.3, 1.4, .5, 1); }
+.bi:not(.in) { opacity: 0; }
+.bi-rise:not(.in) { translate: 0 56px; }
+.bi-drop:not(.in) { translate: 0 -56px; }
+.bi-left:not(.in) { translate: -80px 0; }
+.bi-right:not(.in) { translate: 80px 0; }
+.bi-pop:not(.in), .bi-scale:not(.in) { scale: .82; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .bi { transition: none !important; }
+}
+
+/* Панель управления */
+#bar { position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom, 0px)); translate: -50% 0;
+  display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 999px;
+  background: rgba(10, 14, 24, .78); backdrop-filter: blur(10px); color: #E8EEF8;
+  font: 600 14px/1 system-ui, Segoe UI, Arial, sans-serif; transition: opacity .3s; z-index: 5; }
+#bar.hide { opacity: 0; pointer-events: none; }
+#bar button, #bar a { all: unset; cursor: pointer; padding: 9px 13px; border-radius: 999px; color: inherit; }
+#bar button:hover, #bar a:hover, #bar button:focus-visible, #bar a:focus-visible { background: rgba(255, 255, 255, .14); }
+#count { font-variant-numeric: tabular-nums; min-width: 64px; text-align: center; opacity: .9; }
+#progress { position: fixed; left: 0; top: 0; height: 3px; background: linear-gradient(90deg, #2DE2FF, #8B7CFF); transition: width .4s ease; z-index: 5; }
+#hint { position: fixed; right: 16px; top: 12px; color: rgba(232, 238, 248, .55); font: 500 12px system-ui, Arial, sans-serif; z-index: 5; transition: opacity .6s; }
+#err { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 16px system-ui, Arial, sans-serif; text-align: center; padding: 24px; }

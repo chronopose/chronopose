@@ -1,0 +1,60 @@
+<section id="goal" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grD" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="17"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grD)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 06 — Постановка</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">06 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">Цель и гипотеза</h2>
+<p style="position:absolute;left:128px;top:276px;width:400px;font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:2px;color:#B83000">ЦЕЛЬ</p>
+<p data-build-in="rise 1 auto" style="position:absolute;left:128px;top:320px;width:900px;font-size:44px;font-weight:600;line-height:1.2;letter-spacing:-0.5px;color:#0E0E0C">Прототип киберфизической системы, которая по видео и сигналам носимых датчиков распознаёт действия человека и сообщает о значимых событиях обычным языком.</p>
+<div data-build-in="rise 2 auto" style="position:absolute;left:128px;top:668px;width:420px;display:flex;flex-direction:column;gap:10px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:2px;color:#0E0E0C">ОБЪЕКТ</p>
+<p style="font-size:28px;font-weight:500;line-height:1.3;color:#0E0E0C">Мониторинг поведения людей в киберфизических системах</p>
+</div>
+<div data-build-in="rise 3 auto" style="position:absolute;left:608px;top:668px;width:420px;display:flex;flex-direction:column;gap:10px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:2px;color:#0E0E0C">ПРЕДМЕТ</p>
+<p style="font-size:28px;font-weight:500;line-height:1.3;color:#0E0E0C">Методы оценки позы, трекинга, классификации действий и слияния видео с данными IoT</p>
+</div>
+<div data-build-in="left 4 auto" style="position:absolute;left:1104px;top:276px;width:688px;height:628px;background:#F23D00;display:flex;flex-direction:column;gap:20px;padding:40px 44px 40px 44px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:2px;color:#0E0E0C">ГИПОТЕЗА</p>
+<p style="font-size:38px;font-weight:600;line-height:1.2;letter-spacing:-0.5px;color:#0E0E0C">Скелет + инерциальный датчик + событийная логика распознают поведение устойчивее и дают меньше ложных тревог, чем один видеопоток.</p>
+</div>
+<x-embed style="position:absolute;left:1148px;top:660px;width:600px;height:150px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=600,H=150,S=1;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#0E0E0C';
+function frame(ms){var t=ms/1000;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.strokeStyle=INK;x.lineCap='round';x.lineJoin='round';
+var M=360,CY=75;
+function ease(u){return u*u*(3-2*u)}
+/* video line */
+x.lineWidth=3;x.beginPath();for(var i=0;i<=M;i+=4){var u=i/M,k=1-ease(u),y=CY-44*k+Math.sin(i*0.035-t*3)*16*k;if(i)x.lineTo(i,y);else x.moveTo(i,y)}x.stroke();
+/* imu line */
+x.beginPath();for(var i=0;i<=M;i+=3){var u=i/M,k=1-ease(u),n=Math.sin(i*0.21-t*9)*9+Math.sin(i*0.5-t*14)*6,y=CY+44*k+n*k;if(i)x.lineTo(i,y);else x.moveTo(i,y)}x.stroke();
+/* fused */
+x.lineWidth=9;x.beginPath();x.moveTo(M,CY);x.lineTo(W-34,CY);x.stroke();
+x.beginPath();x.moveTo(W-40,CY-22);x.lineTo(W-8,CY);x.lineTo(W-40,CY+22);x.stroke();
+/* packets */
+for(var k=0;k<3;k++){var u=((t*0.45+k/3)%1),px=M+u*(W-60-M);x.fillStyle='#EFEBE1';x.beginPath();x.arc(px,CY,5,0,6.283);x.fill()}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<p style="position:absolute;left:1148px;top:836px;width:600px;font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#0E0E0C">ВИДЕО + IMU → ОДНО РЕШЕНИЕ</p>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПРОВЕРЯЕМ: ВИДЕО · IMU · ОБА · ОТКАЗ ИСТОЧНИКА</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

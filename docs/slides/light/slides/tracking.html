@@ -1,0 +1,78 @@
+<section id="tracking" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grH" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="31"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grH)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:276px;width:880px;height:640px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=880,H=640,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#0E0E0C',OR='#F23D00',PA='#EFEBE1';
+var PATH=[[140,130],[220,300],[220,470],[440,524],[660,470],[660,300],[730,140],[530,190],[350,190]],L=[],TOT=0;
+for(var i=0;i<PATH.length;i++){var a=PATH[i],b=PATH[(i+1)%PATH.length],d=Math.sqrt(Math.pow(b[0]-a[0],2)+Math.pow(b[1]-a[1],2));L.push(d);TOT+=d}
+function pos(s){s=((s%TOT)+TOT)%TOT;for(var i=0;i<PATH.length;i++){if(s<=L[i]){var a=PATH[i],b=PATH[(i+1)%PATH.length],u=s/L[i];return[a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u]}s-=L[i]}return PATH[0]}
+var CAM=[{x:44,y:44,d:0.72,f:0.62,r:370,n:'C1'},{x:836,y:44,d:PI-0.72,f:0.62,r:370,n:'C2'},{x:440,y:598,d:-PI/2,f:1.12,r:240,n:'C3'}];
+function sees(m,p){var dx=p[0]-m.x,dy=p[1]-m.y,r=Math.sqrt(dx*dx+dy*dy);if(r>m.r)return false;var a=Math.atan2(dy,dx)-m.d;while(a>PI)a-=2*PI;while(a<-PI)a+=2*PI;return Math.abs(a)<m.f}
+var PP=[{g:'P-003',o:60,cam:-2,loc:[11,6,3],fl:0},{g:'P-007',o:TOT*0.52,cam:-2,loc:[14,8,5],fl:0}],last=0;
+function tag(tx,ty,s,bg,fg,bd){var w=x.measureText(s).width+20;x.fillStyle=bg;x.fillRect(tx,ty,w,34);if(bd){x.strokeStyle=bd;x.lineWidth=2;x.strokeRect(tx,ty,w,34)}x.fillStyle=fg;x.fillText(s,tx+10,ty+18);return w}
+function frame(ms){var t=ms/1000,dt=Math.min(0.05,t-last);last=t;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';x.textAlign='left';
+/* fov */
+for(var i=0;i<3;i++){var m=CAM[i];x.fillStyle='rgba(242,61,0,0.13)';x.beginPath();x.moveTo(m.x,m.y);x.arc(m.x,m.y,m.r,m.d-m.f,m.d+m.f);x.closePath();x.fill();x.strokeStyle=OR;x.lineWidth=2;x.setLineDash([9,8]);x.stroke();x.setLineDash([])}
+/* walls */
+x.strokeStyle=INK;x.lineWidth=5;x.lineCap='square';x.beginPath();x.rect(18,18,844,604);
+x.moveTo(440,18);x.lineTo(440,150);x.moveTo(440,232);x.lineTo(440,362);
+x.moveTo(18,362);x.lineTo(180,362);x.moveTo(262,362);x.lineTo(618,362);x.moveTo(700,362);x.lineTo(862,362);x.stroke();
+/* cameras */
+for(var i=0;i<3;i++){var m=CAM[i];x.fillStyle=INK;x.fillRect(m.x-16,m.y-16,32,32);x.fillStyle=INK;x.fillText(m.n,i==1?m.x-58:m.x+24,i==2?m.y-2:m.y+2)}
+/* path hint */
+x.strokeStyle=INK;x.globalAlpha=0.22;x.lineWidth=2;x.setLineDash([3,9]);x.beginPath();for(var i=0;i<=PATH.length;i++){var q=PATH[i%PATH.length];if(i)x.lineTo(q[0],q[1]);else x.moveTo(q[0],q[1])}x.stroke();x.setLineDash([]);x.globalAlpha=1;
+/* people */
+for(var k=0;k<2;k++){var pp=PP[k],s=t*62+pp.o,p=pos(s),cam=-1;for(var i=0;i<3;i++)if(sees(CAM[i],p)){cam=i;break}
+if(cam!=pp.cam){if(cam>=0&&pp.cam!=-2){pp.loc[cam]++;pp.fl=1}pp.cam=cam}
+for(var j=1;j<=12;j++){var q=pos(s-j*13);x.globalAlpha=0.5-j*0.035;x.fillStyle=INK;x.beginPath();x.arc(q[0],q[1],3.5,0,6.283);x.fill()}x.globalAlpha=1;
+if(pp.fl>0){pp.fl-=dt*1.1;x.strokeStyle=OR;x.lineWidth=4;x.globalAlpha=Math.max(0,pp.fl);x.beginPath();x.arc(p[0],p[1],16+(1-pp.fl)*46,0,6.283);x.stroke();x.globalAlpha=1}
+x.fillStyle=cam>=0?OR:PA;x.strokeStyle=INK;x.lineWidth=3.5;x.beginPath();x.arc(p[0],p[1],14,0,6.283);x.fill();x.stroke();
+var tx=Math.min(p[0]+22,W-250),ty=Math.max(p[1]-66,26),w=tag(tx,ty,pp.g,INK,PA,null);
+if(cam>=0)tag(tx+w,ty,CAM[cam].n+'·'+pp.loc[cam],PA,INK,INK);else tag(tx+w,ty,'?',PA,OR,OR)}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 11 — Методы</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">11 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">Трекинг: кто есть кто</h2>
+<div data-build-in="left 1 auto" style="position:absolute;left:1072px;top:276px;width:720px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B83000">ВНУТРИ КАМЕРЫ</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">ByteTrack</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Связывает детекции соседних кадров, включая слабые. MOT17: 80,3 MOTA, 77,3 IDF1, 30 кадр/с.</p>
+</div>
+<div data-build-in="left 2 auto" style="position:absolute;left:1072px;top:494px;width:720px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B83000">МЕЖДУ КАМЕРАМИ</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Re-ID + топология</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Вектор внешности OSNet, допустимое время перехода и граф соседства камер. Пары подбирает венгерский алгоритм.</p>
+</div>
+<div data-build-in="left 3 auto" style="position:absolute;left:1072px;top:744px;width:720px;display:flex;flex-direction:column;gap:12px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B83000">ТРИ ИСХОДА</p>
+<div style="display:flex;flex-direction:row;gap:12px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#EFEBE1;background:#0E0E0C;padding:8px 14px 8px 14px">СОВПАЛ</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border:2px solid #0E0E0C;padding:6px 14px 6px 14px">НЕ ОПРЕДЕЛЁН</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;background:#F23D00;padding:8px 14px 8px 14px">НОВЫЙ</p>
+</div>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Не уверены — не склеиваем: «?» лучше чужого номера.</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ФИГ. 11 — ПЛАН: 3 КАМЕРЫ, 2 ЧЕЛОВЕКА · ARXIV 2110.06864</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

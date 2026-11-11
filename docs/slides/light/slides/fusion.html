@@ -1,0 +1,64 @@
+<section id="fusion" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grM" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="53"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grM)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:270px;width:900px;height:650px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=900,H=650,S=1;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#0E0E0C',OR='#F23D00',BL='#1B2FE0',PA='#EFEBE1',CL=['идёт','сидит','падает','лежит'];
+var VA=[0.05,0.03,0.88,0.04],VB=[0.3,0.24,0.26,0.2],IM=[0.02,0.02,0.93,0.03],cur={v:VA.slice(),a:0.6};
+function lerp(a,b,u){return a+(b-a)*u}
+function row(y,lab,col,P,hi){x.fillStyle=INK;x.textAlign='left';x.fillText(lab,0,y+70);
+for(var i=0;i<4;i++){var bx=190+i*172,bh=P[i]*120;x.strokeStyle=INK;x.lineWidth=2;x.beginPath();x.moveTo(bx,y+130);x.lineTo(bx+132,y+130);x.stroke();
+x.fillStyle=(hi&&i==2)?OR:col;x.fillRect(bx+16,y+130-bh,100,bh);x.fillStyle=INK;x.textAlign='center';x.fillText(P[i].toFixed(2).replace('.',','),bx+66,y+130-bh-18)}}
+function frame(ms){var t=ms/1000,ph=(t%12),occ=ph>5&&ph<10.5,k=0.06;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';
+var tv=occ?VB:VA,ta=occ?0.18:0.6;for(var i=0;i<4;i++)cur.v[i]=lerp(cur.v[i],tv[i],k);cur.a=lerp(cur.a,ta,k);
+var F=[];for(var i=0;i<4;i++)F[i]=cur.a*cur.v[i]+(1-cur.a)*IM[i];
+row(10,'ВИДЕО',INK,cur.v,false);row(190,'IMU',BL,IM,false);
+/* alpha slider */
+var sy=380;x.strokeStyle=INK;x.lineWidth=3;x.beginPath();x.moveTo(190,sy);x.lineTo(860,sy);x.stroke();x.fillStyle=OR;x.fillRect(190+cur.a*670-8,sy-20,16,40);
+x.fillStyle=INK;x.textAlign='left';x.fillText('α = '+cur.a.toFixed(2).replace('.',','),0,sy);
+x.fillStyle=occ?OR:INK;x.textAlign='right';x.fillText(occ?'человек закрыт: верим датчику':'оба источника в норме',860,sy+38);
+row(440,'ИТОГ',INK,F,true);
+for(var i=0;i<4;i++){x.fillStyle=INK;x.textAlign='center';x.fillText(CL[i],190+i*172+66,612)}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 15 — Методы</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">15 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">Слияние: два свидетеля</h2>
+<div data-build-in="left 1 auto" style="position:absolute;left:1092px;top:276px;width:700px;background:#0E0E0C;display:flex;flex-direction:column;gap:10px;padding:26px 30px 28px 30px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#F23D00">ПОЗДНЕЕ СЛИЯНИЕ</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:26px;font-weight:600;line-height:1.3;white-space:nowrap;color:#EFEBE1">P = α · Pвидео + (1 − α) · Pimu</p>
+</div>
+<div data-build-in="left 2 auto" style="position:absolute;left:1092px;top:448px;width:700px;display:flex;flex-direction:column;gap:6px;border-top:2px solid #0E0E0C;padding:12px 0px 0px 0px">
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">В прототипе</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">ST-GCN и 1D-CNN голосуют независимо, вероятности складываются с весом α.</p>
+</div>
+<div data-build-in="left 3 auto" style="position:absolute;left:1092px;top:606px;width:700px;display:flex;flex-direction:column;gap:6px;border-top:2px solid #0E0E0C;padding:12px 0px 0px 0px">
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Исследуем</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Адаптивный α: вес источника падает, когда его ответ размыт (высокая энтропия) или точки закрыты.</p>
+</div>
+<div data-build-in="left 4 auto" style="position:absolute;left:1092px;top:796px;width:700px;display:flex;flex-direction:column;gap:6px;border-top:2px solid #0E0E0C;padding:12px 0px 0px 0px">
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:56px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Отказ источника</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Нет датчика — работает видео с пометкой «без подтверждения».</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ФИГ. 15 — ВЕРОЯТНОСТИ КЛАССОВ, ИЛЛЮСТРАТИВНЫЕ ЗНАЧЕНИЯ</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

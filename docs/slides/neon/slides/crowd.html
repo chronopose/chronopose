@@ -1,0 +1,84 @@
+<section id="crowd" data-transition="fade" style="background:#05070D">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" style="position:absolute;top:0;left:0;width:1920px;height:1080px">
+<defs><radialGradient id="nAcrowd" cx="0.85" cy="0.2" r="0.55"><stop offset="0" stop-color="#2DE2FF" stop-opacity="0.16"/><stop offset="1" stop-color="#2DE2FF" stop-opacity="0"/></radialGradient><radialGradient id="nBcrowd" cx="0.05" cy="1" r="0.6"><stop offset="0" stop-color="#8B7CFF" stop-opacity="0.18"/><stop offset="1" stop-color="#8B7CFF" stop-opacity="0"/></radialGradient></defs><rect width="1920" height="1080" fill="url(#nAcrowd)"/><rect width="1920" height="1080" fill="url(#nBcrowd)"/><path d="M0 128H1920M0 256H1920M0 384H1920M0 512H1920M0 640H1920M0 768H1920M0 896H1920M0 1024H1920M128 0V1080M256 0V1080M384 0V1080M512 0V1080M640 0V1080M768 0V1080M896 0V1080M1024 0V1080M1152 0V1080M1280 0V1080M1408 0V1080M1536 0V1080M1664 0V1080M1792 0V1080" stroke="#7FB8FF" stroke-opacity="0.05" stroke-width="1" fill="none"/>
+<path d="M128 112H1792M128 968H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+  <x-embed style="position:absolute;top:262px;left:128px;width:1664px;height:330px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){var _SK=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){var s=this.strokeStyle,a=this.globalAlpha,w=this.lineWidth;if(typeof s!='string'||a<0.2)return _SK.apply(this,arguments);this.globalAlpha=a*0.16;this.lineWidth=w*3.4+3;_SK.apply(this,arguments);this.globalAlpha=a;this.lineWidth=w;return _SK.apply(this,arguments)};
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#2de2ff'){this.save();this.strokeStyle='#05070d';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=1664,H=330,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#EEF4FF',OR='#2DE2FF',PA='#05070D';
+var E=[[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+/* pose: dir=+1 faces right; ph gait phase; ag aggression 0..1; t time; id */
+function pose(ph,ag,t,id){var bob=-0.02*Math.abs(Math.sin(ph)),ln=0.22*ag,P=[],sh=[0.03+0.5*Math.sin(ln),-0.52*Math.cos(ln)+bob];
+function leg(p,dx,st){var th=0.42*Math.sin(p)*(1-ag)+st*ag,fl=(0.1+0.7*Math.max(0,Math.cos(p)))*(1-ag)+0.25*ag,h=[dx,bob],k=[h[0]+0.42*Math.sin(th),h[1]+0.42*Math.cos(th)];return[h,k,[k[0]+0.42*Math.sin(th-fl),k[1]+0.42*Math.cos(th-fl)]]}
+function arm(p,dx,pn){var a=0.45*Math.sin(p)*(1-ag)+(1.1+0.6*pn)*ag,b=0.5*(1-ag)+(1.5-1.4*pn)*ag,s=[sh[0]+dx,sh[1]],e=[s[0]+0.27*Math.sin(a),s[1]+0.27*Math.cos(a)];return[s,e,[e[0]+0.25*Math.sin(a+b),e[1]+0.25*Math.cos(a+b)]]}
+var p1=Math.pow(Math.max(0,Math.sin(t*9+id)),3),p2=Math.pow(Math.max(0,Math.sin(t*9+id+2.6)),3);
+var L=leg(ph,-0.05,0.4),R=leg(ph+PI,0.05,-0.35),A=arm(ph+PI,-0.07,p1),B=arm(ph,0.07,p2);
+P[5]=A[0];P[7]=A[1];P[9]=A[2];P[6]=B[0];P[8]=B[1];P[10]=B[2];P[11]=L[0];P[13]=L[1];P[15]=L[2];P[12]=R[0];P[14]=R[1];P[16]=R[2];
+P.h=[sh[0]+0.04+0.1*Math.sin(ln),sh[1]-0.235];P.n=sh;return P}
+function fig(P,ox,oy,u,dir,col,lw){x.strokeStyle=col;x.lineWidth=lw;x.lineCap='round';x.lineJoin='round';x.beginPath();
+for(var i=0;i<12;i++){var a=P[E[i][0]],b=P[E[i][1]];x.moveTo(ox+dir*a[0]*u,oy+a[1]*u);x.lineTo(ox+dir*b[0]*u,oy+b[1]*u)}
+x.moveTo(ox+dir*P.n[0]*u,oy+P.n[1]*u);x.lineTo(ox+dir*P.h[0]*u,oy+(P.h[1]+0.1)*u);x.stroke();x.beginPath();x.arc(ox+dir*P.h[0]*u,oy+P.h[1]*u,0.1*u,0,6.283);x.stroke()}
+var U=128,GY=292,OY=GY-0.86*U,PE=[];
+for(var i=0;i<11;i++)PE.push({x:60+i*160+(i%3)*22,v:(i%2?1:-1)*(22+((i*37)%19)),ph:i*1.7,id:i});
+var A=4,B=5,T=14,last=0;
+function frame(ms){var t=ms/1000,dt=Math.min(0.05,t-last);last=t;var tc=t%T,ag=tc<4?0:tc<5?(tc-4):tc<11?1:tc<12?12-tc:0;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.strokeStyle=INK;x.lineWidth=2;x.beginPath();x.moveTo(0,GY+4);x.lineTo(W,GY+4);x.stroke();
+var mid=(PE[A].x+PE[B].x)/2;
+for(var i=0;i<PE.length;i++){var p=PE[i],f=(i==A||i==B);
+if(f){var tgt=mid+(i==A?-62:62);if(ag>0){p.x+=(tgt-p.x)*Math.min(1,dt*3)*ag}else{p.x+=p.v*dt}}
+else{var dd=p.x-mid,flee=ag>0.5&&Math.abs(dd)<330?(dd>0?1:-1)*70:0;p.x+=(p.v+flee*ag)*dt}
+if(p.x<-60)p.x+=W+120;if(p.x>W+60)p.x-=W+120;p.ph+=dt*(f&&ag>0?1:Math.abs(p.v)/14)}
+/* interaction links */
+if(ag>0.05){var pa=PE[A],pb=PE[B];x.strokeStyle=OR;x.lineWidth=2.5;x.globalAlpha=ag*0.8;x.setLineDash([7,7]);x.beginPath();
+var Pa=pose(pa.ph,ag,t,1),Pb=pose(pb.ph,ag,t,4),J=[9,10,5,6];for(var k=0;k<4;k++)for(var m=0;m<4;m++){x.moveTo(pa.x+Pa[J[k]][0]*U,OY+Pa[J[k]][1]*U);x.lineTo(pb.x-Pb[J[m]][0]*U,OY+Pb[J[m]][1]*U)}x.stroke();x.setLineDash([]);x.globalAlpha=1}
+for(var i=0;i<PE.length;i++){var p=PE[i],f=(i==A||i==B),a=f?ag:0,dir=f?(i==A?1:-1):(p.v>0?1:-1);fig(pose(p.ph,a,t,i==A?1:4),p.x,OY,U,dir,f&&ag>0.3?OR:INK,f&&ag>0.3?4.2:2.6)}
+/* alert box */
+if(ag>0.3){var bx=mid-150,bw=300;x.strokeStyle=OR;x.lineWidth=4;x.strokeRect(bx,OY-0.95*U,bw,1.86*U);
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';x.textAlign='left';x.fillStyle=OR;x.fillRect(bx-2,OY-0.95*U-40,bw+4,40);x.fillStyle=INK;x.fillText('АГРЕССИЯ  '+(0.6+0.34*Math.min(1,(tc-4)/3)).toFixed(2),bx+12,OY-0.95*U-19)}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+  <div style="position:absolute;top:64px;right:128px;left:128px;display:flex;flex-direction:row;align-items:center;justify-content:space-between">
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#EEF4FF">Пл. 13 — Методы</p>
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#EEF4FF">13 / 29</p>
+  </div>
+  <h2 style="position:absolute;top:132px;left:124px;width:1664px;font-family:'Unbounded', Arial, sans-serif;font-size:58px;font-weight:800;line-height:1.08;letter-spacing:-1px;color:#EEF4FF">Агрессия в толпе: как её считают</h2>
+  <div data-build-in="rise 1 auto" style="position:absolute;top:620px;left:128px;width:380px;display:flex;flex-direction:column;gap:6px;padding:12px 0 0;border-top:2PX SOLID rgba(125,170,235,0.55)">
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#2DE2FF">01</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#EEF4FF">Скелеты всех</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Поза и номер каждого человека в кадре, без лиц</p>
+  </div>
+  <div data-build-in="rise 2 auto" style="position:absolute;top:620px;left:556px;width:380px;display:flex;flex-direction:column;gap:6px;padding:12px 0 0;border-top:2PX SOLID rgba(125,170,235,0.55)">
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#2DE2FF">02</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#EEF4FF">Резкость</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Скорость и ускорение кистей и стоп, наклон корпуса</p>
+  </div>
+  <div data-build-in="rise 3 auto" style="position:absolute;top:620px;left:984px;width:380px;display:flex;flex-direction:column;gap:6px;padding:12px 0 0;border-top:2PX SOLID rgba(125,170,235,0.55)">
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#2DE2FF">03</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#EEF4FF">Граф двоих</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Суставы сблизившихся людей связываются в один граф для ST-GCN</p>
+  </div>
+  <div data-build-in="rise 4 auto" style="position:absolute;top:620px;left:1412px;width:380px;display:flex;flex-direction:column;gap:6px;padding:12px 0 0;border-top:2PX SOLID rgba(125,170,235,0.55)">
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#2DE2FF">04</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:37px;font-weight:800;line-height:1.08;color:#EEF4FF">Событие</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Несколько окон подряд — и оператор получает текст с местом и временем</p>
+  </div>
+  <div data-build-in="fade 5 auto" style="position:absolute;top:848px;left:128px;width:1664px;height:84px;display:flex;flex-direction:row;gap:28px;align-items:center;padding:0 32px;background:#0E1B38;border:1px solid rgba(45,226,255,0.45)">
+    <p style="width:179px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#2DE2FF">БЕЗОПАСНЕЕ</p>
+    <p style="font-family:'Manrope', Arial, sans-serif;font-size:28px;font-weight:600;line-height:1.2;color:#EEF4FF">Оператор видит событие, а не сорок экранов: помощь приходит раньше, а личности остаются псевдонимами.</p>
+  </div>
+  <div style="position:absolute;right:128px;bottom:64px;left:128px;display:flex;flex-direction:row;align-items:center;justify-content:space-between">
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ДАННЫЕ ДЛЯ ОБУЧЕНИЯ: RWF-2000 — 2000 КЛИПОВ С КАМЕР, ПОЛОВИНА С ДРАКАМИ</p>
+    <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ФИГ. 13</p>
+  </div>
+</section>

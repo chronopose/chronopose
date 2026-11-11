@@ -1,0 +1,81 @@
+<section id="results" data-transition="fade" style="background:#05070D;color:#EEF4FF;font-family:'Manrope', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><radialGradient id="nAresults" cx="0.85" cy="0.2" r="0.55"><stop offset="0" stop-color="#2DE2FF" stop-opacity="0.16"/><stop offset="1" stop-color="#2DE2FF" stop-opacity="0"/></radialGradient><radialGradient id="nBresults" cx="0.05" cy="1" r="0.6"><stop offset="0" stop-color="#8B7CFF" stop-opacity="0.18"/><stop offset="1" stop-color="#8B7CFF" stop-opacity="0"/></radialGradient></defs><rect width="1920" height="1080" fill="url(#nAresults)"/><rect width="1920" height="1080" fill="url(#nBresults)"/><path d="M0 128H1920M0 256H1920M0 384H1920M0 512H1920M0 640H1920M0 768H1920M0 896H1920M0 1024H1920M128 0V1080M256 0V1080M384 0V1080M512 0V1080M640 0V1080M768 0V1080M896 0V1080M1024 0V1080M1152 0V1080M1280 0V1080M1408 0V1080M1536 0V1080M1664 0V1080M1792 0V1080" stroke="#7FB8FF" stroke-opacity="0.05" stroke-width="1" fill="none"/>
+<path d="M128 112H1792M128 968H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:262px;width:1664px;height:340px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){var _SK=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){var s=this.strokeStyle,a=this.globalAlpha,w=this.lineWidth;if(typeof s!='string'||a<0.2)return _SK.apply(this,arguments);this.globalAlpha=a*0.16;this.lineWidth=w*3.4+3;_SK.apply(this,arguments);this.globalAlpha=a;this.lineWidth=w;return _SK.apply(this,arguments)};
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#2de2ff'){this.save();this.strokeStyle='#05070d';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=1664,H=340,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#EEF4FF',OR='#2DE2FF',PA='#05070D';
+var E=[[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+function walk(p,q){var bob=-0.022*Math.abs(Math.sin(p)),P=[],sh=[0.03,-0.52+bob];
+function leg(ph,dx){var th=0.48*Math.sin(ph)*(1-q)+0.3*q,fl=(0.12+0.8*Math.max(0,Math.cos(ph)))*(1-q)+0.6*q,h=[dx,bob],k=[h[0]+0.42*Math.sin(th),h[1]+0.42*Math.cos(th)];return[h,k,[k[0]+0.42*Math.sin(th-fl),k[1]+0.42*Math.cos(th-fl)]]}
+function arm(ph,dx){var a=0.5*Math.sin(ph)*(1-q)+1.6*q,s=[sh[0]+dx,sh[1]],e=[s[0]+0.27*Math.sin(a),s[1]+0.27*Math.cos(a)];return[s,e,[e[0]+0.25*Math.sin(a+0.55),e[1]+0.25*Math.cos(a+0.55)]]}
+var L=leg(p,-0.05),R=leg(p+PI,0.05),A=arm(p+PI,-0.07),B=arm(p,0.07);
+P[5]=A[0];P[7]=A[1];P[9]=A[2];P[6]=B[0];P[8]=B[1];P[10]=B[2];P[11]=L[0];P[13]=L[1];P[15]=L[2];P[12]=R[0];P[14]=R[1];P[16]=R[2];
+var th=Math.pow(q,1.7)*1.5,cs=Math.cos(th),sn=Math.sin(th),my=-9;
+for(var j=5;j<17;j++){var vx=P[j][0],vy=P[j][1]-0.84;P[j]=[vx*cs-vy*sn,vx*sn+vy*cs+0.84];if(P[j][1]>my)my=P[j][1]}
+for(var j=5;j<17;j++)P[j][1]+=0.84-my;P.th=th;return P}
+function fig(P,ox,oy,u,al,col,lw){x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=lw;x.lineCap='round';x.lineJoin='round';x.beginPath();
+for(var i=0;i<12;i++){var a=P[E[i][0]],b=P[E[i][1]];x.moveTo(ox+a[0]*u,oy+a[1]*u);x.lineTo(ox+b[0]*u,oy+b[1]*u)}
+var cs=Math.cos(P.th),sn=Math.sin(P.th),nx=ox+(P[5][0]+P[6][0])/2*u,ny=oy+(P[5][1]+P[6][1])/2*u,hx=nx+(0.03*cs+0.235*sn)*u,hy=ny+(0.03*sn-0.235*cs)*u;
+x.moveTo(nx,ny);x.lineTo(nx+(hx-nx)*0.58,ny+(hy-ny)*0.58);x.stroke();x.beginPath();x.arc(hx,hy,0.1*u,0,6.283);x.stroke();x.globalAlpha=1}
+var U=140,GY=300,OY=GY-0.865*U,K=0.0295,STEP=64,XF=1050,T=16;
+function tag(tx,ty,s,bg,fg){var w=x.measureText(s).width+20;x.fillStyle=bg;x.fillRect(tx,ty,w,34);x.fillStyle=fg;x.fillText(s,tx+10,ty+18);return w}
+function frame(ms){var t=(ms/1000+2)%T,xw=Math.min(XF,-60+t*150),tf=(XF+60)/150,q=t<tf?0:Math.min(1,Math.pow((t-tf)/1.1,2)),al=t>T-0.8?(T-t)/0.8:1;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);x.globalAlpha=al;
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';x.textAlign='left';
+/* zones */
+x.strokeStyle=INK;x.lineWidth=2;x.beginPath();x.moveTo(0,GY+3);x.lineTo(W,GY+3);x.stroke();x.setLineDash([8,8]);x.beginPath();x.moveTo(620,20);x.lineTo(620,GY);x.stroke();x.setLineDash([]);
+x.fillStyle=INK;x.fillText('cam_01',16,26);x.fillText('cam_02',636,26);
+/* exposures */
+for(var j=0;j*STEP<xw-20;j++)fig(walk(j*STEP*K,0),j*STEP,OY,U,0.3*al,INK,2);
+var QQ=[0.35,0.6,0.82];for(var k=0;k<3;k++)if(q>QQ[k])fig(walk(XF*K,QQ[k]),XF+QQ[k]*0.95*U,OY,U,0.34*al,INK,2);
+var P=walk(xw*K,q),fx=xw+q*0.95*U;fig(P,fx,OY,U,al,q>=1?OR:INK,q>=1?4.2:3.2);
+/* id tag follows */
+var w=tag(Math.min(fx-50,W-420),OY-0.98*U-40,'P-003',INK,PA);tag(Math.min(fx-50,W-420)+w,OY-0.98*U-40,q>0.5?'ПАДАЕТ':'ИДЁТ',q>0.5?OR:PA,INK);
+if(xw>600&&xw<760){x.strokeStyle=OR;x.lineWidth=4;x.beginPath();x.arc(xw,OY,110-((xw-600)/160)*40,0,6.283);x.stroke()}
+/* imu + alert */
+if(q>=1){var d=t-tf-1.1;x.fillStyle=INK;if(d>0.4)x.fillText('IMU: удар подтверждён',1290,44);
+if(d>1.2){x.fillStyle=OR;x.fillRect(1290,70,360,96);x.fillStyle=INK;x.fillText('ОПОВЕЩЕНИЕ',1306,100);x.fillText('отправлено, 2,8 с',1306,136)}}
+x.globalAlpha=1;requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#EEF4FF">Пл. 28 — Проверка и итог</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#EEF4FF">28 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Unbounded', Arial, sans-serif;font-size:59px;font-weight:800;line-height:1.08;letter-spacing:-1px;color:#EEF4FF">Что покажем в итоге</h2>
+<div data-build-in="rise 1 auto" style="position:absolute;left:128px;top:636px;width:380px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B9ADFF">01</p>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:43px;font-weight:800;line-height:1.08;color:#EEF4FF">Прототип</p>
+<p style="font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Сценарий целиком: две камеры, датчик, событие, текст</p>
+</div>
+<div data-build-in="rise 2 auto" style="position:absolute;left:556px;top:636px;width:380px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B9ADFF">02</p>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:42px;font-weight:800;line-height:1.08;color:#EEF4FF">Сайт</p>
+<p style="font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Страница проекта и демо-панель с живым журналом событий</p>
+</div>
+<div data-build-in="rise 3 auto" style="position:absolute;left:984px;top:636px;width:380px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B9ADFF">03</p>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:44px;font-weight:800;line-height:1.08;color:#EEF4FF">Набор данных</p>
+<p style="font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Синхронные видео и IMU с разметкой действий</p>
+</div>
+<div data-build-in="rise 4 auto" style="position:absolute;left:1412px;top:636px;width:380px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B9ADFF">04</p>
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:41px;font-weight:800;line-height:1.08;color:#EEF4FF">Отчёт</p>
+<p style="font-size:26px;font-weight:500;line-height:1.26;color:#EEF4FF">Сравнение методов, метрики, выводы по гипотезе</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ФИГ. 28 — СЦЕНАРИЙ ДЕМОНСТРАЦИИ; ВРЕМЯ 2,8 С — ЦЕЛЕВОЕ, НЕ ИЗМЕРЕННОЕ</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">4 РЕЗУЛЬТАТА</p>
+</div>
+</section>

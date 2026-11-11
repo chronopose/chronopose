@@ -1,0 +1,63 @@
+<section id="fusion" data-transition="fade" style="background:#05070D;color:#EEF4FF;font-family:'Manrope', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><radialGradient id="nAfusion" cx="0.85" cy="0.2" r="0.55"><stop offset="0" stop-color="#2DE2FF" stop-opacity="0.16"/><stop offset="1" stop-color="#2DE2FF" stop-opacity="0"/></radialGradient><radialGradient id="nBfusion" cx="0.05" cy="1" r="0.6"><stop offset="0" stop-color="#8B7CFF" stop-opacity="0.18"/><stop offset="1" stop-color="#8B7CFF" stop-opacity="0"/></radialGradient></defs><rect width="1920" height="1080" fill="url(#nAfusion)"/><rect width="1920" height="1080" fill="url(#nBfusion)"/><path d="M0 128H1920M0 256H1920M0 384H1920M0 512H1920M0 640H1920M0 768H1920M0 896H1920M0 1024H1920M128 0V1080M256 0V1080M384 0V1080M512 0V1080M640 0V1080M768 0V1080M896 0V1080M1024 0V1080M1152 0V1080M1280 0V1080M1408 0V1080M1536 0V1080M1664 0V1080M1792 0V1080" stroke="#7FB8FF" stroke-opacity="0.05" stroke-width="1" fill="none"/>
+<path d="M128 112H1792M128 968H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:270px;width:900px;height:650px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){var _SK=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){var s=this.strokeStyle,a=this.globalAlpha,w=this.lineWidth;if(typeof s!='string'||a<0.2)return _SK.apply(this,arguments);this.globalAlpha=a*0.16;this.lineWidth=w*3.4+3;_SK.apply(this,arguments);this.globalAlpha=a;this.lineWidth=w;return _SK.apply(this,arguments)};
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#2de2ff'){this.save();this.strokeStyle='#05070d';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=900,H=650,S=1;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#EEF4FF',OR='#2DE2FF',BL='#8B7CFF',PA='#05070D',CL=['идёт','сидит','падает','лежит'];
+var VA=[0.05,0.03,0.88,0.04],VB=[0.3,0.24,0.26,0.2],IM=[0.02,0.02,0.93,0.03],cur={v:VA.slice(),a:0.6};
+function lerp(a,b,u){return a+(b-a)*u}
+function row(y,lab,col,P,hi){x.fillStyle=INK;x.textAlign='left';x.fillText(lab,0,y+70);
+for(var i=0;i<4;i++){var bx=190+i*172,bh=P[i]*120;x.strokeStyle=INK;x.lineWidth=2;x.beginPath();x.moveTo(bx,y+130);x.lineTo(bx+132,y+130);x.stroke();
+x.fillStyle=(hi&&i==2)?OR:col;x.fillRect(bx+16,y+130-bh,100,bh);x.fillStyle=INK;x.textAlign='center';x.fillText(P[i].toFixed(2).replace('.',','),bx+66,y+130-bh-18)}}
+function frame(ms){var t=ms/1000,ph=(t%12),occ=ph>5&&ph<10.5,k=0.06;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';
+var tv=occ?VB:VA,ta=occ?0.18:0.6;for(var i=0;i<4;i++)cur.v[i]=lerp(cur.v[i],tv[i],k);cur.a=lerp(cur.a,ta,k);
+var F=[];for(var i=0;i<4;i++)F[i]=cur.a*cur.v[i]+(1-cur.a)*IM[i];
+row(10,'ВИДЕО',INK,cur.v,false);row(190,'IMU',BL,IM,false);
+/* alpha slider */
+var sy=380;x.strokeStyle=INK;x.lineWidth=3;x.beginPath();x.moveTo(190,sy);x.lineTo(860,sy);x.stroke();x.fillStyle=OR;x.fillRect(190+cur.a*670-8,sy-20,16,40);
+x.fillStyle=INK;x.textAlign='left';x.fillText('α = '+cur.a.toFixed(2).replace('.',','),0,sy);
+x.fillStyle=occ?OR:INK;x.textAlign='right';x.fillText(occ?'человек закрыт: верим датчику':'оба источника в норме',860,sy+38);
+row(440,'ИТОГ',INK,F,true);
+for(var i=0;i<4;i++){x.fillStyle=INK;x.textAlign='center';x.fillText(CL[i],190+i*172+66,612)}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#EEF4FF">Пл. 15 — Методы</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#EEF4FF">15 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Unbounded', Arial, sans-serif;font-size:58px;font-weight:800;line-height:1.08;letter-spacing:-1px;color:#EEF4FF">Слияние: два свидетеля</h2>
+<div data-build-in="left 1 auto" style="position:absolute;left:1092px;top:276px;width:700px;background:#0E1B38;display:flex;flex-direction:column;gap:10px;padding:26px 30px 28px 30px;border:1px solid rgba(45,226,255,0.45)">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#2DE2FF">ПОЗДНЕЕ СЛИЯНИЕ</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;font-weight:600;line-height:1.3;white-space:nowrap;color:#EEF4FF">P = α · Pвидео + (1 − α) · Pimu</p>
+</div>
+<div data-build-in="left 2 auto" style="position:absolute;left:1092px;top:448px;width:700px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:37px;font-weight:800;line-height:1.08;color:#EEF4FF">В прототипе</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">ST-GCN и 1D-CNN голосуют независимо, вероятности складываются с весом α.</p>
+</div>
+<div data-build-in="left 3 auto" style="position:absolute;left:1092px;top:606px;width:700px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#EEF4FF">Исследуем</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">Адаптивный α: вес источника падает, когда его ответ размыт (высокая энтропия) или точки закрыты.</p>
+</div>
+<div data-build-in="left 4 auto" style="position:absolute;left:1092px;top:796px;width:700px;display:flex;flex-direction:column;gap:6px;border-top:2PX SOLID rgba(125,170,235,0.55);padding:12px 0px 0px 0px">
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:39px;font-weight:800;line-height:1.08;color:#EEF4FF">Отказ источника</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">Нет датчика — работает видео с пометкой «без подтверждения».</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ФИГ. 15 — ВЕРОЯТНОСТИ КЛАССОВ, ИЛЛЮСТРАТИВНЫЕ ЗНАЧЕНИЯ</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

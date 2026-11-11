@@ -1,0 +1,64 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-11-10T12:00:00Z" },
+  "lists": "css",
+  "title": "Детекция ключевых точек и классификация поведения в КФС",
+  "cover": "cover",
+  "order": [
+    "cover",
+    "problem",
+    "relevance",
+    "republic",
+    "republic-link",
+    "goal",
+    "scope",
+    "pipeline",
+    "pose",
+    "faces",
+    "tracking",
+    "stgcn",
+    "crowd",
+    "iot",
+    "fusion",
+    "events",
+    "architecture",
+    "tz",
+    "kpi",
+    "tracks",
+    "wbs-nir",
+    "wbs-site",
+    "team",
+    "matrix",
+    "roadmap",
+    "experiments",
+    "risks",
+    "results",
+    "final"
+  ],
+  "sections": {
+    "s1": { "description": "Постановка: тема, проблема, актуальность, цель и границы проекта", "start": "cover" },
+    "s2": { "description": "Методы: от ключевых точек к семантическим оповещениям", "start": "pipeline" },
+    "s3": { "description": "Архитектура, техническое задание и целевые показатели", "start": "architecture" },
+    "s4": { "description": "Два трека работ, роли в команде и дорожная карта", "start": "tracks" },
+    "s5": { "description": "Эксперименты, риски и ожидаемые результаты", "start": "experiments" }
+  },
+  "faces": {
+    "sofia-sans-extra-condensed": {
+      "family": "Sofia Sans Extra Condensed",
+      "href": "https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@400..900&display=swap"
+    },
+    "old-standard-tt": {
+      "family": "Old Standard TT",
+      "href": "https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap"
+    },
+    "martian-mono": {
+      "family": "Martian Mono",
+      "href": "https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300..700&display=swap"
+    },
+    "golos-text": {
+      "family": "Golos Text",
+      "href": "https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&display=swap"
+    }
+  },
+  "designSystems": []
+}

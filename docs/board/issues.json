@@ -1243,9 +1243,9 @@
 "p": "SCRUM-15",
 "l": [
 "epic-n6",
-"role-ml",
 "mvp",
 "mvp-w2",
+"role-ml",
 "sprint-mvp"
 ],
 "sp": 3
@@ -1273,9 +1273,9 @@
 "p": "SCRUM-1",
 "l": [
 "epic-org",
-"role-dm",
 "mvp",
 "mvp-w1",
+"role-dm",
 "sprint-mvp"
 ],
 "sp": 1

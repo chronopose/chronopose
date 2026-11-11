@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Презентация chronopose</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Manrope:wght@500;600;700&family=Sofia+Sans+Extra+Condensed:wght@900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root { --bg:#05070D; --fg:#EAF2FF; --muted:#9DB0CF; --line:#1C2A44; --cyan:#2DE2FF; --violet:#A99BFF; color-scheme:dark; }
+* { box-sizing:border-box }
+body { margin:0; min-height:100vh; background:var(--bg); color:var(--fg); font:16px/1.5 'Manrope',Arial,sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:48px; }
+.wrap { max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:28px }
+.eyebrow { font:500 12px/1 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan) }
+h1 { font:700 clamp(28px,5vw,48px)/1.1 'Unbounded',Arial,sans-serif; margin:10px 0 10px; letter-spacing:-.02em; text-wrap:balance }
+.lead { color:var(--muted); max-width:64ch; margin:0 }
+.decks { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px }
+.deck { display:flex; flex-direction:column; text-decoration:none; color:inherit; border:1px solid var(--line); border-radius:18px; overflow:hidden; transition:border-color .2s, translate .2s }
+.deck:hover, .deck:focus-visible { border-color:var(--cyan); translate:0 -3px; outline:none }
+.thumb { aspect-ratio:16/9; display:flex; flex-direction:column; justify-content:flex-end; gap:6px; padding:22px; max-width:100% }
+.light .thumb { background:#EFEBE1; color:#0E0E0C }
+.light .thumb b { font:900 clamp(30px,4.4vw,52px)/.9 'Sofia Sans Extra Condensed',Arial,sans-serif; text-transform:uppercase }
+.light .thumb i { font:italic 400 clamp(18px,2.4vw,28px)/1 Georgia,serif; color:#F23D00 }
+.neon .thumb { background:radial-gradient(circle at 85% 30%, rgba(45,226,255,.22), transparent 55%), radial-gradient(circle at 0 100%, rgba(139,124,255,.25), transparent 60%), #05070D }
+.neon .thumb b { font:700 clamp(18px,2.6vw,30px)/1.15 'Unbounded',Arial,sans-serif }
+.neon .thumb i { font:700 clamp(18px,2.6vw,30px)/1.15 'Unbounded',Arial,sans-serif; font-style:normal; background:linear-gradient(90deg,#2DE2FF,#8B7CFF); -webkit-background-clip:text; background-clip:text; color:transparent }
+.meta { padding:14px 18px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; background:#0B1222 }
+.meta strong { font-weight:700 } .meta span { color:var(--muted); font-size:14px }
+.keys { color:var(--muted); font-size:14px; margin:0 }
+kbd { font:500 12px 'JetBrains Mono',monospace; border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:2px 6px; color:var(--fg) }
+footer { display:flex; flex-wrap:wrap; gap:8px 20px; color:var(--muted); font-size:14px; border-top:1px solid var(--line); padding-top:16px }
+footer a { color:var(--cyan) }
+@media (max-width:720px) { .decks { grid-template-columns:1fr } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">НИП · chronopose · показ 12.12.2026</div>
+    <h1>Видеть позу. Понимать действие. Оповещать словами.</h1>
+    <p class="lead">Методы детекции ключевых точек и поведенческих классификаторов для мониторинга живых или движущихся объектов в киберфизических системах. Одна презентация в двух оформлениях — 29 слайдов, живые анимации.</p>
+  </header>
+  <section class="decks" aria-label="Версии презентации">
+    <a class="deck light" href="light/">
+      <div class="thumb"><b>Видеть позу.</b><i>оповещать словами.</i></div>
+      <div class="meta"><strong>Хронофотография</strong><span>светлая · для проектора в светлой аудитории</span></div>
+    </a>
+    <a class="deck neon" href="neon/">
+      <div class="thumb"><b>Видеть позу.</b><i>Оповещать словами.</i></div>
+      <div class="meta"><strong>Neon</strong><span>тёмная · для экрана и затемнённого зала</span></div>
+    </a>
+  </section>
+  <p class="keys">Листать — <kbd>←</kbd> <kbd>→</kbd>, пробел, клик или свайп. Полный экран — <kbd>F</kbd>. Ссылка на конкретный слайд — номер после #, например <code>light/#12</code>.</p>
+  <footer>
+    <a href="https://github.com/chronopose/chronopose">Репозиторий</a>
+    <a href="../board/">Доска задач</a>
+    <a href="https://github.com/chronopose/chronopose/blob/main/ROLES.md">Роли команды</a>
+  </footer>
+</main>
+</body>
+</html>

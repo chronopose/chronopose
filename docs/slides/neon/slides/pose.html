@@ -1,0 +1,84 @@
+<section id="pose" data-transition="fade" style="background:#05070D;color:#EEF4FF;font-family:'Manrope', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><radialGradient id="nApose" cx="0.85" cy="0.2" r="0.55"><stop offset="0" stop-color="#2DE2FF" stop-opacity="0.16"/><stop offset="1" stop-color="#2DE2FF" stop-opacity="0"/></radialGradient><radialGradient id="nBpose" cx="0.05" cy="1" r="0.6"><stop offset="0" stop-color="#8B7CFF" stop-opacity="0.18"/><stop offset="1" stop-color="#8B7CFF" stop-opacity="0"/></radialGradient></defs><rect width="1920" height="1080" fill="url(#nApose)"/><rect width="1920" height="1080" fill="url(#nBpose)"/><path d="M0 128H1920M0 256H1920M0 384H1920M0 512H1920M0 640H1920M0 768H1920M0 896H1920M0 1024H1920M128 0V1080M256 0V1080M384 0V1080M512 0V1080M640 0V1080M768 0V1080M896 0V1080M1024 0V1080M1152 0V1080M1280 0V1080M1408 0V1080M1536 0V1080M1664 0V1080M1792 0V1080" stroke="#7FB8FF" stroke-opacity="0.05" stroke-width="1" fill="none"/>
+<path d="M128 112H1792M128 968H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:262px;width:580px;height:680px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){var _SK=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){var s=this.strokeStyle,a=this.globalAlpha,w=this.lineWidth;if(typeof s!='string'||a<0.2)return _SK.apply(this,arguments);this.globalAlpha=a*0.16;this.lineWidth=w*3.4+3;_SK.apply(this,arguments);this.globalAlpha=a;this.lineWidth=w;return _SK.apply(this,arguments)};
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#2de2ff'){this.save();this.strokeStyle='#05070d';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=580,H=680,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#EEF4FF',OR='#2DE2FF',PA='#05070D';
+var E=[[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16],[0,1],[0,2],[1,3],[2,4]];
+function front(t){var a=0.5+0.5*Math.sin(t*0.9),sw=0.02*Math.sin(t*0.7),sh=-0.52,P=[];
+P[11]=[0.11,0];P[12]=[-0.11,0];P[13]=[0.125,0.42];P[14]=[-0.125,0.42];P[15]=[0.14,0.84];P[16]=[-0.14,0.84];
+P[5]=[0.19+sw,sh];P[6]=[-0.19+sw,sh];
+var aL=0.3+a*2.2,fL=aL+0.55*Math.sin(t*1.6)+0.3,aR=0.35+(1-a)*1.5,fR=aR+0.9+0.6*Math.sin(t*1.25);
+P[7]=[P[5][0]+0.27*Math.sin(aL),sh+0.27*Math.cos(aL)];P[9]=[P[7][0]+0.25*Math.sin(fL),P[7][1]+0.25*Math.cos(fL)];
+P[8]=[P[6][0]-0.27*Math.sin(aR),sh+0.27*Math.cos(aR)];P[10]=[P[8][0]-0.25*Math.sin(fR),P[8][1]+0.25*Math.cos(fR)];
+P[0]=[sw,sh-0.21];P[1]=[sw+0.035,sh-0.245];P[2]=[sw-0.035,sh-0.245];P[3]=[sw+0.08,sh-0.225];P[4]=[sw-0.08,sh-0.225];return P}
+var U=300,OX=300,OY=352;
+function pt(P,j){return[OX+P[j][0]*U,OY+P[j][1]*U]}
+function ang(P,a,b,cc){var A=pt(P,a),B=pt(P,b),C=pt(P,cc),a1=Math.atan2(A[1]-B[1],A[0]-B[0]),a2=Math.atan2(C[1]-B[1],C[0]-B[0]),d=a2-a1;while(d>PI)d-=2*PI;while(d<-PI)d+=2*PI;
+x.strokeStyle=OR;x.lineWidth=3.5;x.beginPath();x.arc(B[0],B[1],40,a1,a2,d<0);x.stroke();
+var m=a1+d/2;x.fillStyle=OR;x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textAlign='center';x.textBaseline='middle';x.fillText(Math.round(Math.abs(d)*180/PI)+'°',B[0]+Math.cos(m)*74,B[1]+Math.sin(m)*74)}
+function frame(ms){var t=ms/1000,P=front(t);
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+/* height bracket */
+x.strokeStyle=INK;x.lineWidth=2;x.beginPath();x.moveTo(34,OY-0.85*U);x.lineTo(34,OY+0.84*U);for(var k=0;k<=10;k++){var yy=OY-0.85*U+k*0.169*U;x.moveTo(34,yy);x.lineTo(k%5==0?58:46,yy)}x.stroke();
+/* ground */
+x.beginPath();x.moveTo(70,OY+0.84*U+16);x.lineTo(W-20,OY+0.84*U+16);x.stroke();
+/* bones */
+x.lineCap='round';x.lineJoin='round';x.lineWidth=4;x.beginPath();
+for(var i=0;i<E.length;i++){var A=pt(P,E[i][0]),B=pt(P,E[i][1]);x.moveTo(A[0],A[1]);x.lineTo(B[0],B[1])}
+var n=pt(P,0);x.moveTo((pt(P,5)[0]+pt(P,6)[0])/2,pt(P,5)[1]);x.lineTo(n[0],n[1]+26);x.stroke();
+x.lineWidth=2.5;x.beginPath();x.arc(n[0],n[1]-6,38,0,6.283);x.stroke();
+/* angles */
+ang(P,5,7,9);ang(P,6,8,10);
+/* joints + indices */
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';
+for(var j=0;j<17;j++){var q=pt(P,j),r=j<5?4:9,pu=((t*0.8-j*0.06)%1+1)%1;
+if(j>4){x.globalAlpha=(1-pu)*0.55;x.strokeStyle=OR;x.lineWidth=2;x.beginPath();x.arc(q[0],q[1],r+pu*22,0,6.283);x.stroke();x.globalAlpha=1}
+x.fillStyle=j<5?INK:PA;x.strokeStyle=INK;x.lineWidth=3;x.beginPath();x.arc(q[0],q[1],r,0,6.283);x.fill();if(j>4)x.stroke();
+if(j>4){var side=P[j][0]>=0?1:-1;if(j==7||j==8)continue;x.fillStyle=INK;x.textAlign=side>0?'left':'right';x.fillText(String(j),q[0]+side*18,q[1]+(j==5||j==6?-20:0))}}
+x.fillStyle=INK;x.textAlign='center';x.fillText('0',n[0],n[1]-62);
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#EEF4FF">Пл. 09 — Методы</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#EEF4FF">09 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Unbounded', Arial, sans-serif;font-size:59px;font-weight:800;line-height:1.08;letter-spacing:-1px;color:#EEF4FF">Ключевые точки: 17 суставов</h2>
+<div data-build-in="left 1 auto" style="position:absolute;left:776px;top:284px;width:1016px;height:136px;display:flex;flex-direction:row;align-items:center;gap:28px;border-top:2PX SOLID rgba(125,170,235,0.55)">
+<p style="width:330px;font-family:'Manrope', Arial, sans-serif;font-size:40px;font-weight:800;line-height:1.08;color:#EEF4FF">OpenPifPaf</p>
+<p style="flex:1;font-size:26px;font-weight:500;line-height:1.25;color:#EEF4FF">Снизу вверх: поля PIF и PAF. Люди, животные, автомобили. EPFL, IEEE T-ITS</p>
+<p style="width:236px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;line-height:1.2;text-align:center;color:#EEF4FF;border:2PX SOLID rgba(45,226,255,0.6);padding:10px 8px 10px 8px">ЭТАЛОН ИЗ ТЕМЫ</p>
+</div>
+<div data-build-in="left 2 auto" style="position:absolute;left:776px;top:420px;width:1016px;height:136px;display:flex;flex-direction:row;align-items:center;gap:28px;border-top:2PX SOLID rgba(125,170,235,0.55)">
+<p style="width:330px;font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#EEF4FF">RTMPose-m</p>
+<p style="flex:1;font-size:26px;font-weight:500;line-height:1.25;color:#EEF4FF">75,8 AP на COCO. 90+ кадр/с на процессоре, 430+ на GTX 1660 Ti</p>
+<p style="width:236px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;line-height:1.2;text-align:center;color:#EEF4FF;border:2PX SOLID rgba(45,226,255,0.6);padding:10px 8px 10px 8px">АЛЬТЕРНАТИВА</p>
+</div>
+<div data-build-in="left 3 auto" style="position:absolute;left:776px;top:556px;width:1016px;height:136px;display:flex;flex-direction:row;align-items:center;gap:28px;border-top:2PX SOLID rgba(125,170,235,0.55)">
+<p style="width:330px;font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#2DE2FF;text-shadow:1.5PX 0PX 0PX #05070D, -1.5PX 0PX 0PX #05070D, 0PX 1.5PX 0PX #05070D, 0PX -1.5PX 0PX #05070D, 1.5PX 1.5PX 0PX #05070D, -1.5PX -1.5PX 0PX #05070D, 1.5PX -1.5PX 0PX #05070D, -1.5PX 1.5PX 0PX #05070D">YOLO26n-pose</p>
+<p style="flex:1;font-size:26px;font-weight:500;line-height:1.25;color:#EEF4FF">57,2 mAP. 1,8 мс на кадр на T4. Всего 2,9 млн параметров</p>
+<p style="width:236px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;line-height:1.2;text-align:center;color:#05070D;background:#2DE2FF;border:2PX SOLID rgba(45,226,255,0.6);padding:10px 8px 10px 8px">ОСНОВА ПРОТОТИПА</p>
+</div>
+<div data-build-in="left 4 auto" style="position:absolute;left:776px;top:692px;width:1016px;height:136px;display:flex;flex-direction:row;align-items:center;gap:28px;border-top:2PX SOLID rgba(125,170,235,0.55);border-bottom:2PX SOLID rgba(125,170,235,0.55)">
+<p style="width:330px;font-family:'Manrope', Arial, sans-serif;font-size:38px;font-weight:800;line-height:1.08;color:#EEF4FF">MediaPipe Pose</p>
+<p style="flex:1;font-size:26px;font-weight:500;line-height:1.25;color:#EEF4FF">33 точки и 3D-ориентиры. Запускается даже на телефоне</p>
+<p style="width:236px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:600;line-height:1.2;text-align:center;color:#EEF4FF;border:2PX SOLID rgba(45,226,255,0.6);padding:10px 8px 10px 8px">БЫСТРЫЙ СТАРТ</p>
+</div>
+<p data-build-in="fade 5 auto" style="position:absolute;left:776px;top:856px;width:1016px;font-size:30px;font-weight:600;line-height:1.3;color:#EEF4FF">На выходе этапа: 17 × (x, y, уверенность) на каждого человека в кадре.</p>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ИСТОЧНИКИ: ARXIV 2103.02440, 2303.07399; ULTRALYTICS DOCS</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ФИГ. 9 — РАЗМЕТКА COCO</p>
+</div>
+</section>

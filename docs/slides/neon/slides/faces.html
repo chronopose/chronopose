@@ -1,0 +1,80 @@
+<section id="faces" data-transition="fade" style="background:#05070D;color:#EEF4FF;font-family:'Manrope', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><radialGradient id="nAfaces" cx="0.85" cy="0.2" r="0.55"><stop offset="0" stop-color="#2DE2FF" stop-opacity="0.16"/><stop offset="1" stop-color="#2DE2FF" stop-opacity="0"/></radialGradient><radialGradient id="nBfaces" cx="0.05" cy="1" r="0.6"><stop offset="0" stop-color="#8B7CFF" stop-opacity="0.18"/><stop offset="1" stop-color="#8B7CFF" stop-opacity="0"/></radialGradient></defs><rect width="1920" height="1080" fill="url(#nAfaces)"/><rect width="1920" height="1080" fill="url(#nBfaces)"/><path d="M0 128H1920M0 256H1920M0 384H1920M0 512H1920M0 640H1920M0 768H1920M0 896H1920M0 1024H1920M128 0V1080M256 0V1080M384 0V1080M512 0V1080M640 0V1080M768 0V1080M896 0V1080M1024 0V1080M1152 0V1080M1280 0V1080M1408 0V1080M1536 0V1080M1664 0V1080M1792 0V1080" stroke="#7FB8FF" stroke-opacity="0.05" stroke-width="1" fill="none"/>
+<path d="M128 112H1792M128 968H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#2DE2FF" stroke-opacity="0.7" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:262px;width:600px;height:680px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){var _SK=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){var s=this.strokeStyle,a=this.globalAlpha,w=this.lineWidth;if(typeof s!='string'||a<0.2)return _SK.apply(this,arguments);this.globalAlpha=a*0.16;this.lineWidth=w*3.4+3;_SK.apply(this,arguments);this.globalAlpha=a;this.lineWidth=w;return _SK.apply(this,arguments)};
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#2de2ff'){this.save();this.strokeStyle='#05070d';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=600,H=680,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#EEF4FF',OR='#2DE2FF',PA='#05070D',PT=[],KEY=[];
+function add(px,py,k){PT.push([px,py]);if(k)KEY.push(PT.length-1)}
+for(var i=0;i<17;i++){var a=PI*(0.04+0.92*i/16);add(-Math.cos(a)*0.92,0.05+Math.sin(a)*1.08)}
+for(var s=-1;s<=1;s+=2)for(var i=0;i<5;i++)add(s*(0.2+i*0.14),-0.5-Math.sin(i/4*PI)*0.09);
+for(var i=0;i<4;i++)add(0,-0.3+i*0.14,i==3);
+for(var i=0;i<5;i++)add(-0.2+i*0.1,0.24+(i==2?0.05:Math.abs(i-2)==1?0.03:0));
+for(var s=-1;s<=1;s+=2)for(var i=0;i<6;i++){var a=i/6*2*PI;add(s*0.42+Math.cos(a)*0.15,-0.3+Math.sin(a)*0.07)}
+for(var i=0;i<12;i++){var a=i/12*2*PI;add(Math.cos(a)*0.34,0.6+Math.sin(a)*0.13,i==0||i==6)}
+for(var i=0;i<8;i++){var a=i/8*2*PI;add(Math.cos(a)*0.22,0.6+Math.sin(a)*0.045)}
+var CH=[[0,16,0],[17,21,0],[22,26,0],[27,30,0],[31,35,0],[36,41,1],[42,47,1],[48,59,1],[60,67,1]],U=205,OX=300,OY=318;
+function frame(ms){var t=ms/1000,yaw=0.42*Math.sin(t*0.7),nod=0.07*Math.sin(t*1.1),bl=(t%3.4)<0.14?0.15:1,mo=1+0.5*Math.max(0,Math.sin(t*1.9)),Q=[];
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+for(var i=0;i<PT.length;i++){var px=PT[i][0],py=PT[i][1];if(i>=36&&i<48)py=-0.3+(py+0.3)*bl;if(i>=48)py=0.6+(py-0.6)*mo;
+var z=Math.sqrt(Math.max(0,1-px*px*0.9-py*py*0.45))*0.75;Q[i]=[OX+(px*Math.cos(yaw)+z*Math.sin(yaw))*U,OY+(py+nod*z)*U]}
+var mnx=9e9,mxx=-9e9,mny=9e9,mxy=-9e9;for(var i=0;i<Q.length;i++){mnx=Math.min(mnx,Q[i][0]);mxx=Math.max(mxx,Q[i][0]);mny=Math.min(mny,Q[i][1]);mxy=Math.max(mxy,Q[i][1])}
+mnx-=34;mxx+=34;mny-=96;mxy+=30;
+/* box */
+x.strokeStyle=OR;x.lineWidth=4;var tk=38;x.beginPath();x.moveTo(mnx,mny+tk);x.lineTo(mnx,mny);x.lineTo(mnx+tk,mny);x.moveTo(mxx-tk,mny);x.lineTo(mxx,mny);x.lineTo(mxx,mny+tk);x.moveTo(mxx,mxy-tk);x.lineTo(mxx,mxy);x.lineTo(mxx-tk,mxy);x.moveTo(mnx+tk,mxy);x.lineTo(mnx,mxy);x.lineTo(mnx,mxy-tk);x.stroke();
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';x.fillStyle=INK;x.fillRect(mnx,mny-44,186,36);x.fillStyle=PA;x.fillText('ЛИЦО  '+(0.96+0.02*Math.sin(t*2)).toFixed(2),mnx+12,mny-25);
+/* contours */
+x.strokeStyle=INK;x.lineWidth=2.5;x.lineJoin='round';
+for(var k=0;k<CH.length;k++){x.beginPath();for(var i=CH[k][0];i<=CH[k][1];i++){if(i==CH[k][0])x.moveTo(Q[i][0],Q[i][1]);else x.lineTo(Q[i][0],Q[i][1])}if(CH[k][2])x.closePath();x.stroke()}
+for(var i=0;i<Q.length;i++){x.fillStyle=INK;x.beginPath();x.arc(Q[i][0],Q[i][1],4,0,6.283);x.fill()}
+/* 5 key points */
+var e1=[(Q[36][0]+Q[39][0])/2,(Q[36][1]+Q[39][1])/2],e2=[(Q[42][0]+Q[45][0])/2,(Q[42][1]+Q[45][1])/2],K5=[e1,e2,Q[30],Q[48],Q[54]],pu=(t%1.6)/1.6;
+for(var i=0;i<5;i++){x.fillStyle=OR;x.beginPath();x.arc(K5[i][0],K5[i][1],10,0,6.283);x.fill();x.strokeStyle=OR;x.lineWidth=2.5;x.globalAlpha=1-pu;x.beginPath();x.arc(K5[i][0],K5[i][1],10+pu*24,0,6.283);x.stroke();x.globalAlpha=1}
+/* yaw gauge */
+var gx=300,gy=628;x.strokeStyle=INK;x.lineWidth=2.5;x.beginPath();x.moveTo(gx-170,gy);x.lineTo(gx+170,gy);for(var k=-4;k<=4;k++){x.moveTo(gx+k*42.5,gy);x.lineTo(gx+k*42.5,gy-(k%2==0?16:9))}x.stroke();
+x.fillStyle=OR;x.beginPath();x.moveTo(gx+yaw/0.42*150,gy-20);x.lineTo(gx+yaw/0.42*150-10,gy-40);x.lineTo(gx+yaw/0.42*150+10,gy-40);x.closePath();x.fill();
+x.fillStyle=INK;x.textAlign='center';x.fillText('поворот '+(yaw*57.3>=0?'+':'−')+Math.abs(Math.round(yaw*57.3))+'°',gx,gy+26);x.textAlign='left';
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#EEF4FF">Пл. 10 — Методы</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#EEF4FF">10 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Unbounded', Arial, sans-serif;font-size:58px;font-weight:800;line-height:1.08;letter-spacing:-1px;color:#EEF4FF">Лица: найти — не значит узнать</h2>
+<div data-build-in="left 1 auto" style="position:absolute;left:792px;top:280px;width:1000px;display:flex;flex-direction:row;gap:28px;align-items:flex-start;border-top:2PX SOLID rgba(125,170,235,0.55);padding:16px 0px 0px 0px">
+<p style="width:70px;font-family:'Unbounded', Arial, sans-serif;font-size:68px;font-weight:800;line-height:1.08;color:#2DE2FF;text-shadow:1.5PX 0PX 0PX #05070D, -1.5PX 0PX 0PX #05070D, 0PX 1.5PX 0PX #05070D, 0PX -1.5PX 0PX #05070D, 1.5PX 1.5PX 0PX #05070D, -1.5PX -1.5PX 0PX #05070D, 1.5PX -1.5PX 0PX #05070D, -1.5PX 1.5PX 0PX #05070D">1</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:40px;font-weight:800;line-height:1.08;color:#EEF4FF">Детекция: где лицо</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">Рамка и 5 опорных точек: глаза, нос, уголки рта. Эталонный набор WIDER FACE — 32 203 снимка, 393 703 лица.</p>
+</div>
+</div>
+<div data-build-in="left 2 auto" style="position:absolute;left:792px;top:478px;width:1000px;display:flex;flex-direction:row;gap:28px;align-items:flex-start;border-top:2PX SOLID rgba(125,170,235,0.55);padding:16px 0px 0px 0px">
+<p style="width:70px;font-family:'Unbounded', Arial, sans-serif;font-size:44px;font-weight:800;line-height:1.08;color:#2DE2FF;text-shadow:1.5PX 0PX 0PX #05070D, -1.5PX 0PX 0PX #05070D, 0PX 1.5PX 0PX #05070D, 0PX -1.5PX 0PX #05070D, 1.5PX 1.5PX 0PX #05070D, -1.5PX -1.5PX 0PX #05070D, 1.5PX -1.5PX 0PX #05070D, -1.5PX 1.5PX 0PX #05070D">2</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:41px;font-weight:800;line-height:1.08;color:#EEF4FF">Ключевые точки: что с лицом</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">От 68 точек контура до 468 точек сетки MediaPipe. Дают поворот головы, направление взгляда, мимику — те же методы, что и для тела.</p>
+</div>
+</div>
+<div data-build-in="left 3 auto" style="position:absolute;left:792px;top:708px;width:1000px;display:flex;flex-direction:row;gap:28px;align-items:flex-start;border-top:2PX SOLID rgba(125,170,235,0.55);padding:16px 0px 0px 0px">
+<p style="width:70px;font-family:'Unbounded', Arial, sans-serif;font-size:45px;font-weight:800;line-height:1.08;color:#2DE2FF;text-shadow:1.5PX 0PX 0PX #05070D, -1.5PX 0PX 0PX #05070D, 0PX 1.5PX 0PX #05070D, 0PX -1.5PX 0PX #05070D, 1.5PX 1.5PX 0PX #05070D, -1.5PX -1.5PX 0PX #05070D, 1.5PX -1.5PX 0PX #05070D, -1.5PX 1.5PX 0PX #05070D">3</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Manrope', Arial, sans-serif;font-size:41px;font-weight:800;line-height:1.08;color:#EEF4FF">Распознавание: кто это</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#EEF4FF">Лицо превращается в вектор и сравнивается с базой. <b>В проекте этого шага нет:</b> люди получают псевдонимы вида P-003, лица можно размывать.</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ФИГ. 10 — 68 КЛЮЧЕВЫХ ТОЧЕК ЛИЦА, 5 ОПОРНЫХ ВЫДЕЛЕНЫ</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#AEBDD6">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

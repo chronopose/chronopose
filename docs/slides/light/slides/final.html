@@ -1,0 +1,62 @@
+<section id="final" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grZ" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="109"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grZ)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:0px;top:660px;width:1920px;height:330px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=1920,H=330,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#0E0E0C',OR='#F23D00',BL='#1B2FE0',PA='#EFEBE1';
+var E=[[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+function walk(p,wv){var bob=-0.022*Math.abs(Math.sin(p)),P=[],sh=[0.03,-0.52+bob];
+function leg(ph,dx){var th=0.48*Math.sin(ph),fl=0.12+0.8*Math.max(0,Math.cos(ph)),h=[dx,bob],k=[h[0]+0.42*Math.sin(th),h[1]+0.42*Math.cos(th)];return[h,k,[k[0]+0.42*Math.sin(th-fl),k[1]+0.42*Math.cos(th-fl)]]}
+function arm(ph,dx,w){var a=0.5*Math.sin(ph)*(1-w)+w*(2.6+0.35*Math.sin(ph*2.5)),b=0.55*(1-w)+w*0.6*Math.sin(ph*2.5),s=[sh[0]+dx,sh[1]],e=[s[0]+0.27*Math.sin(a),s[1]+0.27*Math.cos(a)];return[s,e,[e[0]+0.25*Math.sin(a+b),e[1]+0.25*Math.cos(a+b)]]}
+var L=leg(p,-0.05),R=leg(p+PI,0.05),A=arm(p+PI,-0.07,0),B=arm(p,0.07,wv);
+P[5]=A[0];P[7]=A[1];P[9]=A[2];P[6]=B[0];P[8]=B[1];P[10]=B[2];P[11]=L[0];P[13]=L[1];P[15]=L[2];P[12]=R[0];P[14]=R[1];P[16]=R[2];return P}
+function fig(P,ox,oy,u,al,col,lw,live){x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=lw;x.lineCap='round';x.lineJoin='round';x.beginPath();
+for(var i=0;i<12;i++){var a=P[E[i][0]],b=P[E[i][1]];x.moveTo(ox+a[0]*u,oy+a[1]*u);x.lineTo(ox+b[0]*u,oy+b[1]*u)}
+var nx=ox+(P[5][0]+P[6][0])/2*u,ny=oy+(P[5][1]+P[6][1])/2*u,hx=nx+0.035*u,hy=ny-0.235*u;x.moveTo(nx,ny);x.lineTo(hx-0.01*u,hy+0.1*u);x.stroke();x.beginPath();x.arc(hx,hy,0.1*u,0,6.283);x.stroke();
+if(live){x.fillStyle=PA;for(var j=5;j<17;j++){x.beginPath();x.arc(ox+P[j][0]*u,oy+P[j][1]*u,5.5,0,6.283);x.fill();x.stroke()}}x.globalAlpha=1}
+var GY=304,U=172,OY=GY-0.865*U,COL=[OR,INK,INK,INK,BL];
+function frame(ms){var t=ms/1000;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+for(var i=0;i<5;i++){var ox=1010+i*176,ph=t*2.2+i*1.1,wv=0.5+0.5*Math.sin(t*1.4-i*0.9);wv=wv*wv;
+for(var k=3;k>=1;k--)fig(walk(ph-k*0.55,0),ox-k*30,OY,U,0.26-k*0.05,INK,2,false);
+fig(walk(ph*0.0+i,wv),ox,OY,U,1,COL[i],i==0?4:3.2,true)}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 29 — Проверка и итог</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">29 / 29</p>
+</div>
+<h1 data-build-in="rise 1 auto" style="position:absolute;left:118px;top:124px;width:1500px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:380px;font-weight:900;line-height:0.86;letter-spacing:-6px;text-transform:uppercase;white-space:nowrap;color:#0E0E0C">Спасибо.</h1>
+<h1 data-build-in="rise 2 auto" style="position:absolute;left:128px;top:470px;width:900px;font-family:'Old Standard TT', Georgia, serif;font-size:150px;font-weight:400;font-style:italic;line-height:1;letter-spacing:-2px;white-space:nowrap;color:#F23D00;text-shadow:2px 0px 0px #0E0E0C, -2px 0px 0px #0E0E0C, 0px 2px 0px #0E0E0C, 0px -2px 0px #0E0E0C, 2px 2px 0px #0E0E0C, -2px -2px 0px #0E0E0C, 2px -2px 0px #0E0E0C, -2px 2px 0px #0E0E0C">вопросы?</h1>
+<div data-build-in="fade 3 auto" style="position:absolute;left:128px;top:690px;width:760px;display:flex;flex-direction:column">
+<div style="display:flex;flex-direction:row;justify-content:space-between;align-items:center;border-top:2px solid #0E0E0C;padding:6px 0px 6px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">КОМАНДА</p>
+<p style="font-size:28px;font-weight:600;color:#0E0E0C">DM · CV · ML · IoT · WEB</p>
+</div>
+<div style="display:flex;flex-direction:row;justify-content:space-between;align-items:center;border-top:2px solid #0E0E0C;padding:6px 0px 6px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">САЙТ</p>
+<p style="font-size:28px;font-weight:600;color:#0E0E0C">[адрес сайта проекта]</p>
+</div>
+<div style="display:flex;flex-direction:row;justify-content:space-between;align-items:center;border-top:2px solid #0E0E0C;padding:6px 0px 6px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">КОНТАКТ</p>
+<p style="font-size:28px;font-weight:600;color:#0E0E0C">[почта или мессенджер]</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ВИДЕТЬ ПОЗУ · ПОНИМАТЬ ДЕЙСТВИЕ · ОПОВЕЩАТЬ СЛОВАМИ</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">12.12.2026</p>
+</div>
+</section>

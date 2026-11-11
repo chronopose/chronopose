@@ -1,0 +1,61 @@
+<section id="problem" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grB" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="11"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grB)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<div style="position:absolute;left:832px;top:272px;width:960px;height:600px;background:#0E0E0C"></div>
+<x-embed style="position:absolute;left:832px;top:272px;width:960px;height:600px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=960,H=600,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var WH='#F5F1E6',OR='#FF5A1F';
+function run(p){
+var bob=-0.05*Math.abs(Math.sin(p)),ln=0.2,sh=[0.5*Math.sin(ln),-0.5*Math.cos(ln)+bob];
+function leg(ph){var th=0.78*Math.sin(ph)+0.08,fl=0.25+1.35*Math.max(0,Math.cos(ph)),k=[0.42*Math.sin(th),bob+0.42*Math.cos(th)];return[[0,bob],k,[k[0]+0.42*Math.sin(th-fl),k[1]+0.42*Math.cos(th-fl)]]}
+function arm(ph){var a=0.85*Math.sin(ph),e=[sh[0]+0.26*Math.sin(a),sh[1]+0.26*Math.cos(a)];return[sh,e,[e[0]+0.24*Math.sin(a+1.45),e[1]+0.24*Math.cos(a+1.45)]]}
+return{n:[leg(p),arm(p+PI)],f:[leg(p+PI),arm(p)],sh:sh,hip:[0,bob],head:[sh[0]+0.06,sh[1]-0.19]}}
+function fig(R,ox,oy,u,al,col,w){
+function seg(A,lw,a2){x.globalAlpha=al*a2;x.lineWidth=lw;x.beginPath();x.moveTo(ox+A[0][0]*u,oy+A[0][1]*u);x.lineTo(ox+A[1][0]*u,oy+A[1][1]*u);x.lineTo(ox+A[2][0]*u,oy+A[2][1]*u);x.stroke()}
+x.strokeStyle=col;x.fillStyle=col;x.lineCap='round';x.lineJoin='round';
+seg(R.f[0],w*0.7,0.4);seg(R.f[1],w*0.7,0.4);
+x.globalAlpha=al;x.lineWidth=w;x.beginPath();x.moveTo(ox+R.hip[0]*u,oy+R.hip[1]*u);x.lineTo(ox+R.sh[0]*u,oy+R.sh[1]*u);x.stroke();
+seg(R.n[0],w,1);seg(R.n[1],w,1);
+x.beginPath();x.arc(ox+R.head[0]*u,oy+R.head[1]*u,0.05*u,0,6.283);x.fill();
+var J=[R.n[0][1],R.n[0][2],R.n[1][1],R.n[1][2],R.sh,R.hip];for(var i=0;i<J.length;i++){x.beginPath();x.arc(ox+J[i][0]*u,oy+J[i][1]*u,w*1.15,0,6.283);x.fill()}
+x.globalAlpha=1}
+var STEP=82,GY=522,U=250,OY=GY-0.86*U,K=0.0085,SPAN=W+420;
+function frame(ms){var t=ms/1000+3;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+var xn=(t*190)%SPAN-210;
+/* scale */
+x.strokeStyle=WH;x.globalAlpha=0.7;x.lineWidth=2;x.beginPath();x.moveTo(32,GY+34);x.lineTo(W-32,GY+34);for(var j=0;32+j*31<=W-32;j++){x.moveTo(32+j*31,GY+34);x.lineTo(32+j*31,GY+(j%5==0?52:43))}x.stroke();x.globalAlpha=1;
+/* trajectories */
+function tr(f,al){x.globalAlpha=al;x.strokeStyle=OR;x.lineWidth=2;x.beginPath();for(var xs=-210;xs<=xn;xs+=5){var R=run(xs*K),q=f(R);if(xs==-210)x.moveTo(xs+q[0]*U,OY+q[1]*U);else x.lineTo(xs+q[0]*U,OY+q[1]*U)}x.stroke();x.globalAlpha=1}
+tr(function(R){return R.head},0.9);tr(function(R){return R.n[0][2]},0.9);tr(function(R){return R.n[1][2]},0.55);
+/* exposures */
+for(var j=-4;j*STEP<W+220;j++){var xj=j*STEP,age=xn-xj;if(age<0)age+=SPAN;var a=Math.max(0,1-age/1150);if(a<0.03)continue;fig(run(xj*K),xj,OY,U,0.28+a*0.6,WH,3,false)}
+fig(run(xn*K),xn,OY,U,1,WH,4.2);
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 02 — Постановка</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">02 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">Идея из 1883 года</h2>
+<p data-build-in="rise 1 auto" style="position:absolute;left:128px;top:272px;width:624px;font-size:30px;font-weight:500;line-height:1.38;color:#0E0E0C">Физиолог Этьен-Жюль Маре одел бегуна в чёрное, нашил белые полосы вдоль рук и ног, а на суставы — точки. На пластинке остались одни линии.</p>
+<p data-build-in="rise 2 auto" style="position:absolute;left:128px;top:462px;width:640px;font-family:'Old Standard TT', Georgia, serif;font-size:50px;font-style:italic;line-height:1.08;letter-spacing:-1px;color:#F23D00;text-shadow:1.5px 0px 0px #0E0E0C, -1.5px 0px 0px #0E0E0C, 0px 1.5px 0px #0E0E0C, 0px -1.5px 0px #0E0E0C, 1.5px 1.5px 0px #0E0E0C, -1.5px -1.5px 0px #0E0E0C, 1.5px -1.5px 0px #0E0E0C, -1.5px 1.5px 0px #0E0E0C">Первая в истории «скелетная последовательность».</p>
+<p data-build-in="rise 3 auto" style="position:absolute;left:128px;top:656px;width:624px;font-size:30px;font-weight:500;line-height:1.38;color:#0E0E0C">Сегодня эти линии строит нейросеть: 17 точек, десятки раз в секунду. Камера уже знает, <b>кто</b> в кадре. Понять, <b>что он делает</b> и пора ли вмешаться, — задача проекта.</p>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ФИГ. 2 — ГЕОМЕТРИЧЕСКАЯ ХРОНОФОТОГРАФИЯ БЕГА, РЕКОНСТРУКЦИЯ</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

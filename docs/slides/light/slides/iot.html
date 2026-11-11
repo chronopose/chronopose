@@ -1,0 +1,69 @@
+<section id="iot" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grJ" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="41"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grJ)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:258px;width:1664px;height:350px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=1664,H=350,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#0E0E0C',OR='#F23D00',BL='#1B2FE0',PA='#EFEBE1',PXS=118,XP=W-96,X0=120,PER=9,LB=['ax','ay','az','gx','gy','gz'];
+function sig(ch,tt){var d=((tt-5)%PER+PER)%PER,w=Math.sin(tt*11.9+ch*1.3)*0.5+Math.sin(tt*23.8+ch*2.1)*0.24+Math.sin(tt*61+ch*4)*0.07;
+if(d<0.55)return 1.7*Math.exp(-d*8)*Math.cos(d*44+ch*1.1);
+if(d<2.8)return(ch<3?(ch==1?0.55:-0.4):0)+0.04*Math.sin(tt*27+ch);
+if(d<3.4)return w*(d-2.8)/0.6;
+if(d>8.3)return w*(1+(d-8.3)*2.2);
+return w}
+function frame(ms){var t=ms/1000+3;
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);
+x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';x.textAlign='left';
+/* second grid */
+x.strokeStyle=INK;x.lineWidth=1.5;x.globalAlpha=0.28;x.beginPath();var t0=Math.ceil(t-(XP-X0)/PXS);for(var s=t0;s<=t;s++){var gx=XP-(t-s)*PXS;x.moveTo(gx,34);x.lineTo(gx,286)}x.stroke();x.globalAlpha=1;
+/* video frame ticks */
+x.lineWidth=2;x.beginPath();var f0=Math.ceil((t-(XP-X0)/PXS)*15);for(var f=f0;f<=t*15;f++){var fx=XP-(t-f/15)*PXS;x.moveTo(fx,14);x.lineTo(fx,26)}x.stroke();
+/* events */
+for(var n=Math.floor((t-5)/PER)-2;n<=Math.floor((t-5)/PER);n++){var te=5+n*PER,ex=XP-(t-te)*PXS;if(te>t||ex<X0-70)continue;var ew=Math.min(0.55,t-te)*PXS;x.fillStyle='rgba(242,61,0,0.2)';x.fillRect(Math.max(ex,X0),34,Math.min(ew,ex+ew-X0),252);x.fillStyle=OR;if(ex>X0)x.fillRect(ex-1.5,34,3,252);if(ex>X0+20&&ex<XP-150)x.fillText('ПАДЕНИЕ',ex+ew+12,50)}
+/* traces */
+for(var ch=0;ch<6;ch++){var cy=62+ch*40;x.strokeStyle=ch<3?INK:BL;x.lineWidth=2.6;x.beginPath();for(var px=X0;px<=XP;px+=3){var v=sig(ch,t-(XP-px)/PXS),y=cy-Math.max(-1.25,Math.min(1.25,v))*15;if(px==X0)x.moveTo(px,y);else x.lineTo(px,y)}x.stroke();
+var vy=cy-Math.max(-1.25,Math.min(1.25,sig(ch,t)))*15;x.fillStyle=ch<3?INK:BL;x.beginPath();x.moveTo(XP+22,vy-9);x.lineTo(XP+2,vy);x.lineTo(XP+22,vy+9);x.closePath();x.fill();
+x.fillText(LB[ch],40,cy)}
+x.strokeStyle=INK;x.lineWidth=2.5;x.beginPath();x.moveTo(XP+30,34);x.lineTo(XP+30,286);x.stroke();
+/* window bracket */
+var tw=Math.floor(t*2)/2,bx2=XP-(t-tw)*PXS,bx1=bx2-2*PXS;x.strokeStyle=OR;x.lineWidth=4;x.beginPath();x.moveTo(bx1,292);x.lineTo(bx1,306);x.lineTo(bx2,306);x.lineTo(bx2,292);x.stroke();
+x.fillStyle=INK;x.textAlign='right';x.fillText('ОКНО 2 с = 100 отсчётов IMU = 30 кадров видео',bx1-16,306);x.textAlign='left';
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 14 — Методы</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">14 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">IoT-контур: датчик на теле</h2>
+<div data-build-in="rise 1 auto" style="position:absolute;left:128px;top:640px;width:520px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B83000">ДАТЧИК</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;white-space:nowrap;color:#0E0E0C">Смартфон + ESP32</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Android-смартфон на поясе отдаёт акселерометр и гироскоп. ESP32 по тревоге включает сигнал. Без закупок.</p>
+</div>
+<div data-build-in="rise 2 auto" style="position:absolute;left:700px;top:640px;width:520px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B83000">ТРАНСПОРТ</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;white-space:nowrap;color:#0E0E0C">MQTT 5.0 + Mosquitto</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">Телеметрия — QoS 0 с номерами пакетов, статусы — QoS 1. Потери считаем, а не прячем.</p>
+</div>
+<div data-build-in="rise 3 auto" style="position:absolute;left:1272px;top:640px;width:520px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #0E0E0C;padding:14px 0px 0px 0px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;letter-spacing:1px;color:#B83000">ВРЕМЯ</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;white-space:nowrap;color:#0E0E0C">Одна шкала на всех</p>
+<p style="font-size:26px;font-weight:500;line-height:1.28;color:#0E0E0C">NTP на сервере и телефонах. Каждый отсчёт несёт метку времени измерения, а не получения.</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ФИГ. 14 — УСКОРЕНИЕ (ЧЁРНЫЙ), УГЛОВАЯ СКОРОСТЬ (СИНИЙ)</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>

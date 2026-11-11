@@ -1,0 +1,119 @@
+<section id="pipeline" data-transition="fade" style="background:#EFEBE1;color:#0E0E0C;font-family:'Golos Text', Arial, sans-serif">
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><filter id="grF" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="23"/><feColorMatrix values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.12 0"/></filter></defs>
+<rect width="1920" height="1080" filter="url(#grF)"/>
+<path d="M128 112H1792M128 968H1792" stroke="#0E0E0C" stroke-width="2" fill="none"/>
+<path d="M128 964H1792" stroke="#0E0E0C" stroke-width="8" stroke-dasharray="1.5 14.5" fill="none"/>
+<path d="M128 960H1792" stroke="#0E0E0C" stroke-width="16" stroke-dasharray="1.5 78.5" fill="none"/>
+<g stroke="#0E0E0C" stroke-width="1.5" fill="none"><circle cx="64" cy="64" r="12"/><path d="M44 64H84M64 44V84"/><circle cx="1856" cy="64" r="12"/><path d="M1836 64H1876M1856 44V84"/><circle cx="64" cy="1016" r="12"/><path d="M44 1016H84M64 996V1036"/><circle cx="1856" cy="1016" r="12"/><path d="M1836 1016H1876M1856 996V1036"/></g>
+</svg>
+<x-embed style="position:absolute;left:128px;top:270px;width:1664px;height:340px"><canvas id="c" style="display:block;width:100vw;height:100vh"></canvas>
+<script>
+(function(){
+var _FT=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(s,a,b){var f=String(this.fillStyle).toLowerCase();if(f=='#f23d00'){this.save();this.strokeStyle='#0e0e0c';this.lineWidth=4;this.lineJoin='round';this.setLineDash([]);this.strokeText(s,a,b);this.restore()}return _FT.apply(this,arguments)};
+var c=document.getElementById('c'),x=c.getContext('2d'),W=1664,H=340,S=1,PI=Math.PI;
+function fit(){var d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round((innerWidth||W)*d);c.height=Math.round((innerHeight||H)*d);S=c.width/W}
+fit();addEventListener('resize',fit);
+var INK='#0E0E0C',OR='#F23D00',BL='#1B2FE0',PA='#EFEBE1';
+var E=[[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+function walk(p){
+var bob=-0.022*Math.abs(Math.sin(p)),P=[],sh=[0.03,-0.52+bob];
+function leg(ph,dx){var th=0.48*Math.sin(ph),fl=0.12+0.8*Math.max(0,Math.cos(ph)),h=[dx,bob],k=[h[0]+0.42*Math.sin(th),h[1]+0.42*Math.cos(th)];return[h,k,[k[0]+0.42*Math.sin(th-fl),k[1]+0.42*Math.cos(th-fl)]]}
+function arm(ph,dx){var a=0.5*Math.sin(ph),s=[sh[0]+dx,sh[1]],e=[s[0]+0.27*Math.sin(a),s[1]+0.27*Math.cos(a)];return[s,e,[e[0]+0.25*Math.sin(a+0.55),e[1]+0.25*Math.cos(a+0.55)]]}
+var L=leg(p,-0.05),R=leg(p+PI,0.05),A=arm(p+PI,-0.07),B=arm(p,0.07);
+P[5]=A[0];P[7]=A[1];P[9]=A[2];P[6]=B[0];P[8]=B[1];P[10]=B[2];P[11]=L[0];P[13]=L[1];P[15]=L[2];P[12]=R[0];P[14]=R[1];P[16]=R[2];
+P.h=[(P[5][0]+P[6][0])/2+0.035,(P[5][1]+P[6][1])/2-0.235];return P}
+function fig(P,ox,oy,u,al,col,lw,dots){
+x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=lw;x.lineCap='round';x.lineJoin='round';x.beginPath();
+for(var i=0;i<12;i++){var a=P[E[i][0]],b=P[E[i][1]];x.moveTo(ox+a[0]*u,oy+a[1]*u);x.lineTo(ox+b[0]*u,oy+b[1]*u)}
+x.moveTo(ox+(P.h[0]-0.035)*u,oy+(P.h[1]+0.235)*u);x.lineTo(ox+P.h[0]*u,oy+(P.h[1]+0.1)*u);x.stroke();
+x.beginPath();x.arc(ox+P.h[0]*u,oy+P.h[1]*u,0.1*u,0,6.283);x.stroke();
+if(dots){x.fillStyle=dots;for(var j=5;j<17;j++){x.beginPath();x.arc(ox+P[j][0]*u,oy+P[j][1]*u,5,0,6.283);x.fill()}}
+x.globalAlpha=1}
+function ds(px,py,ax,ay,bx,by){var dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy,u=l?((px-ax)*dx+(py-ay)*dy)/l:0;u=u<0?0:u>1?1:u;var qx=ax+u*dx-px,qy=ay+u*dy-py;return Math.sqrt(qx*qx+qy*qy)}
+var PT=W/6,CY=118;function cx(i){return PT*(i+0.5)}
+function frame(ms){var t=ms/1000,ph=t*2.6,P=walk(ph);
+x.setTransform(S,0,0,S,0,0);x.clearRect(0,0,W,H);x.setLineDash([]);
+/* frames + links */
+x.strokeStyle=INK;x.lineWidth=2.5;
+for(var i=0;i<6;i++){x.strokeRect(cx(i)-100,18,200,200)}
+for(var i=0;i<5;i++){var a=cx(i)+100,b=cx(i+1)-100;x.lineWidth=2.5;x.strokeStyle=INK;x.beginPath();x.moveTo(a+8,CY);x.lineTo(b-10,CY);x.moveTo(b-22,CY-10);x.lineTo(b-10,CY);x.lineTo(b-22,CY+10);x.stroke();var u=(t*0.8+i*0.2)%1;x.fillStyle=OR;x.fillRect(a+8+u*(b-a-34)-6,CY-6,12,12)}
+/* 1 pixels */
+var c0=cx(0),u1=80,oy=121;x.fillStyle=INK;
+for(var gy=0;gy<12;gy++)for(var gx=0;gx<12;gx++){var px=c0-90+gx*15+7.5,py=28+gy*15+7.5,m=99;for(var i=0;i<12;i++){var a=P[E[i][0]],b=P[E[i][1]],d=ds(px,py,c0+a[0]*u1,oy+a[1]*u1,c0+b[0]*u1,oy+b[1]*u1);if(d<m)m=d}
+var dh=Math.sqrt(Math.pow(px-c0-P.h[0]*u1,2)+Math.pow(py-oy-P.h[1]*u1,2))-8;if(dh<m)m=dh;if(m<8)x.fillRect(px-6.5,py-6.5,13,13);else{x.globalAlpha=0.28;x.fillRect(px-1.5,py-1.5,3,3);x.globalAlpha=1}}
+/* 2 keypoints */
+fig(P,cx(1),oy,u1,1,INK,2.5,OR);
+/* 3 track */
+var c2=cx(2);x.strokeStyle=OR;x.lineWidth=3;x.strokeRect(c2-44,36,88,164);fig(P,c2,oy,u1*0.92,1,INK,2.5,false);
+x.fillStyle=INK;x.fillRect(c2-100,18,86,36);x.fillStyle=PA;x.font='700 24px Consolas,Menlo,"Courier New",monospace';x.textBaseline='middle';x.textAlign='left';x.fillText('ID 7',c2-90,37);
+x.fillStyle=OR;for(var k=1;k<=3;k++){x.globalAlpha=1-k*0.25;x.beginPath();x.arc(c2-44-k*14,196,4,0,6.283);x.fill()}x.globalAlpha=1;
+/* 4 action */
+var c3=cx(3);for(var k=3;k>=0;k--)fig(walk(ph-k*0.55),c3+18-k*24,102,64,k?0.5-k*0.1:1,k?INK:OR,k?2:3,false);
+x.fillStyle=INK;x.fillRect(c3-100,182,200,36);x.fillStyle=PA;x.textAlign='center';x.fillText('ИДЁТ  '+(0.95+0.03*Math.sin(t*2)).toFixed(2),c3,201);
+/* 5 event */
+var c4=cx(4),st=(t*0.7)%4,pos=st<1?0:st<2?st-1:st<3?1+(st-2):2;x.strokeStyle=INK;x.lineWidth=2.5;x.beginPath();x.moveTo(c4-40,CY);x.lineTo(c4-20,CY);x.moveTo(c4+20,CY);x.lineTo(c4+40,CY);x.stroke();
+for(var k=0;k<3;k++){x.beginPath();x.arc(c4-60+k*60,CY,20,0,6.283);x.stroke()}
+x.fillStyle=OR;x.beginPath();x.arc(c4-60+Math.min(pos,2)*60,CY,13,0,6.283);x.fill();
+if(st>=3){var pu=st-3;x.strokeStyle=OR;x.lineWidth=3;x.globalAlpha=1-pu;x.beginPath();x.arc(c4+60,CY,22+pu*46,0,6.283);x.stroke();x.globalAlpha=1;x.fillStyle=PA;x.fillRect(c4+58,CY-8,4,9);x.fillRect(c4+58,CY+4,4,4)}
+/* 6 text */
+var c5=cx(5),pr=(t*0.42)%1.35,LN=[150,120,160,90],tot=520,done=Math.min(1,pr)*tot;x.strokeStyle=INK;x.lineWidth=9;x.lineCap='butt';
+x.fillStyle=OR;x.fillRect(c5-78,50,70,10);
+for(var k=0;k<4;k++){var len=Math.max(0,Math.min(LN[k],done));done-=LN[k];if(len>0){x.setLineDash([34,9,52,9,22,9]);x.beginPath();x.moveTo(c5-78,86+k*30);x.lineTo(c5-78+len,86+k*30);x.stroke();x.setLineDash([])}
+if(len>0&&len<LN[k]){x.fillStyle=OR;x.fillRect(c5-78+len+4,86+k*30-10,8,20)}}
+x.lineCap='round';
+/* imu lane */
+x.strokeStyle=BL;x.fillStyle=BL;x.lineWidth=3;x.textAlign='left';x.fillText('IMU 50 Гц',cx(0)-100,296);
+x.beginPath();for(var px=cx(0)+50;px<=c3;px+=4){var v=Math.sin(px*0.05-t*6)*7+Math.sin(px*0.13-t*11)*4;if(px==cx(0)+50)x.moveTo(px,296+v);else x.lineTo(px,296+v)}x.stroke();
+x.beginPath();x.moveTo(c3,296);x.lineTo(c3,232);x.moveTo(c3-10,244);x.lineTo(c3,232);x.lineTo(c3+10,244);x.stroke();
+var ui=(t*0.5)%1;x.beginPath();x.arc(cx(0)+50+ui*(c3-cx(0)-50),296,6,0,6.283);x.fill();
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script></x-embed>
+<div style="position:absolute;left:128px;right:128px;top:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#0E0E0C">Пл. 08 — Методы</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:500;letter-spacing:1px;color:#0E0E0C">08 / 29</p>
+</div>
+<h2 style="position:absolute;left:124px;top:132px;width:1664px;font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:104px;font-weight:900;line-height:0.95;letter-spacing:-1px;text-transform:uppercase;color:#0E0E0C">Конвейер: от пикселей к словам</h2>
+<div data-build-in="rise 1 auto" style="position:absolute;left:144px;top:628px;width:250px;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B83000">01</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Кадр</p>
+<p style="font-size:26px;font-weight:500;line-height:1.25;color:#0E0E0C">Видеопоток, 10–15 кадров в секунду</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border-top:2px solid #0E0E0C;padding:8px 0px 0px 0px">6,2 МБ</p>
+</div>
+<div data-build-in="rise 2 auto" style="position:absolute;left:421px;top:628px;width:250px;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B83000">02</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Точки</p>
+<p style="font-size:26px;font-weight:500;line-height:1.25;color:#0E0E0C">17 суставов на каждого человека</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border-top:2px solid #0E0E0C;padding:8px 0px 0px 0px">51 ЧИСЛО</p>
+</div>
+<div data-build-in="rise 3 auto" style="position:absolute;left:699px;top:628px;width:250px;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B83000">03</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Трек</p>
+<p style="font-size:26px;font-weight:500;line-height:1.25;color:#0E0E0C">Один человек — один номер</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border-top:2px solid #0E0E0C;padding:8px 0px 0px 0px">1 ID</p>
+</div>
+<div data-build-in="rise 4 auto" style="position:absolute;left:976px;top:628px;width:250px;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B83000">04</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Действие</p>
+<p style="font-size:26px;font-weight:500;line-height:1.25;color:#0E0E0C">Окно 2 с: скелет + сигнал датчика</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border-top:2px solid #0E0E0C;padding:8px 0px 0px 0px">1 КЛАСС ИЗ 7</p>
+</div>
+<div data-build-in="rise 5 auto" style="position:absolute;left:1253px;top:628px;width:250px;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B83000">05</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Событие</p>
+<p style="font-size:26px;font-weight:500;line-height:1.25;color:#0E0E0C">Правила времени и подтверждения</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border-top:2px solid #0E0E0C;padding:8px 0px 0px 0px">1 СОБЫТИЕ</p>
+</div>
+<div data-build-in="rise 6 auto" style="position:absolute;left:1531px;top:628px;width:250px;display:flex;flex-direction:column;gap:6px">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#B83000">06</p>
+<p style="font-family:'Sofia Sans Extra Condensed', Arial, sans-serif;font-size:64px;font-weight:800;line-height:0.95;text-transform:uppercase;color:#0E0E0C">Текст</p>
+<p style="font-size:26px;font-weight:500;line-height:1.25;color:#0E0E0C">Оповещение обычным языком</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;font-weight:600;color:#0E0E0C;border-top:2px solid #0E0E0C;padding:8px 0px 0px 0px">1 ФРАЗА</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;display:flex;flex-direction:row;justify-content:space-between;align-items:center">
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">НИЖНЯЯ СТРОКА — ОБЪЁМ ДАННЫХ НА ВЫХОДЕ ЭТАПА</p>
+<p style="font-family:'Martian Mono', 'Courier New', monospace;font-size:24px;letter-spacing:1px;color:#55524B">ПОЗА → ДЕЙСТВИЕ → ОПОВЕЩЕНИЕ</p>
+</div>
+</section>
