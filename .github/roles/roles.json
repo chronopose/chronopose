@@ -1,0 +1,35 @@
+{
+  "roles": {
+    "DM": {
+      "owner": null,
+      "task": null,
+      "commit": null,
+      "date": null
+    },
+    "CV": {
+      "owner": null,
+      "task": null,
+      "commit": null,
+      "date": null
+    },
+    "ML": {
+      "owner": null,
+      "task": null,
+      "commit": null,
+      "date": null
+    },
+    "IoT": {
+      "owner": null,
+      "task": null,
+      "commit": null,
+      "date": null
+    },
+    "WEB": {
+      "owner": null,
+      "task": null,
+      "commit": null,
+      "date": null
+    }
+  },
+  "done": {}
+}

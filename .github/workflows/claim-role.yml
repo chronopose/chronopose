@@ -1,0 +1,35 @@
+name: claim-role
+
+# Роль закрепляется за тем, кто первым закрыл задачу этой роли (строка Task-Done: SCRUM-123 в коммите).
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: claim-role
+  cancel-in-progress: false
+
+jobs:
+  claim:
+    if: "!contains(github.event.head_commit.message, '[roles-bot]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Обновить роли
+        run: python scripts/claim_role.py --event "$GITHUB_EVENT_PATH"
+      - name: Закоммитить ROLES.md
+        run: |
+          if git diff --quiet -- ROLES.md .github/roles/roles.json; then
+            echo "Роли не изменились"; exit 0
+          fi
+          git config user.name "roles-bot"
+          git config user.email "roles-bot@users.noreply.github.com"
+          git add ROLES.md .github/roles/roles.json
+          git commit -m "Обновить ROLES.md [roles-bot]"
+          git push
