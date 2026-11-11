@@ -1,4 +1,4 @@
-paho-mqtt>=2.0
+paho-mqtt>=2.2.0
 opencv-python
 ultralytics
 numpy
