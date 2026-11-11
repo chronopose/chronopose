@@ -4,7 +4,7 @@
 Видим позу → понимаем действие → оповещаем словами.
 
 - **Цель ближайшая:** MVP к 1 декабря 2026 — см. [docs/mvp.md](docs/mvp.md).
-- **Задачи:** Jira, проект SCRUM на chronopose.atlassian.net.
+- **Задачи:** Jira, проект SCRUM на chronopose.atlassian.net. Публичная копия доски — [chronopose.github.io/chronopose/board](https://chronopose.github.io/chronopose/board/) (снимок, файлы в `docs/board/`).
 - **Роли:** [ROLES.md](ROLES.md) — заполняется автоматически.
 - **Железо:** только то, что есть — Android-смартфоны и одна ESP32.
 - **Как работаем:** [docs/process.md](docs/process.md) — PR, ревью, гейт качества, релизы. Цели — [docs/okr.md](docs/okr.md), решения — [docs/adr/](docs/adr/).

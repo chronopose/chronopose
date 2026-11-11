@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Доска chronopose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: шапка со сводкой → фильтры → три колонки статусов (на телефоне — одна) → эпики с прогрессом */
+:root{
+  --bg:#F3F6FB; --surface:#FFFFFF; --sunk:#E8EEF7; --line:#D3DCEA;
+  --fg:#0D1424; --muted:#56627A;
+  --cyan:#0089A8; --violet:#5B48D6; --ok:#13804B; --warn:#A35F00;
+  --chip:#E3EAF5; --glow:rgba(0,137,168,.16);
+  --f-display:'Unbounded',Arial,sans-serif; --f-body:'Manrope',Arial,sans-serif; --f-mono:'JetBrains Mono',Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#05070D; --surface:#0B1222; --sunk:#08101E; --line:#1C2A44;
+  --fg:#EAF2FF; --muted:#9DB0CF; --cyan:#2DE2FF; --violet:#A99BFF; --ok:#43D68C; --warn:#FFB547;
+  --chip:#12203A; --glow:rgba(45,226,255,.14); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#05070D; --surface:#0B1222; --sunk:#08101E; --line:#1C2A44;
+  --fg:#EAF2FF; --muted:#9DB0CF; --cyan:#2DE2FF; --violet:#A99BFF; --ok:#43D68C; --warn:#FFB547;
+  --chip:#12203A; --glow:rgba(45,226,255,.14); color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+a{color:var(--cyan)}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 32px}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+h1{font:700 clamp(26px,4vw,40px)/1.1 var(--f-display);margin:10px 0 8px;letter-spacing:-.02em;text-wrap:balance}
+.lead{color:var(--muted);max-width:62ch;margin:0}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{font:600 13px/1 var(--f-body);text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:999px}
+.links a:hover,.links a:focus-visible{border-color:var(--cyan);outline:none}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0}
+.stat .k{font:600 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font:700 28px/1.1 var(--f-display);margin-top:10px;font-variant-numeric:tabular-nums}
+.stat .s{color:var(--muted);font-size:13px;margin-top:4px}
+.bar{height:6px;background:var(--sunk);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:99px}
+.filters{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.flabel{font:600 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);min-width:64px}
+.fb{font:600 13px/1 var(--f-body);color:var(--fg);background:var(--chip);border:1px solid transparent;border-radius:999px;padding:8px 12px;cursor:pointer}
+.fb[aria-pressed="true"]{border-color:var(--cyan);background:var(--glow);color:var(--fg)}
+.fb:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+#q{font:500 14px var(--f-body);color:var(--fg);background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0;flex:1 1 220px}
+#q:focus{outline:2px solid var(--cyan);outline-offset:1px}
+.count{font:500 13px var(--f-mono);color:var(--muted);margin-left:auto}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+.col{background:var(--sunk);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.col h2{font:700 14px/1 var(--f-display);margin:4px 4px 2px;display:flex;justify-content:space-between;align-items:center}
+.col h2 span{font:600 12px var(--f-mono);color:var(--muted)}
+.col .empty{color:var(--muted);font-size:13px;padding:14px 6px;text-align:center;border:1px dashed var(--line);border-radius:12px}
+.cards{display:flex;flex-direction:column;gap:8px;max-height:72vh;overflow:auto;padding-right:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.card .top{display:flex;justify-content:space-between;gap:8px;font:600 12px/1 var(--f-mono);color:var(--muted)}
+.card .sum{font-weight:600;line-height:1.35}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font:600 11px/1 var(--f-mono);padding:5px 7px;border-radius:6px;background:var(--chip);color:var(--muted)}
+.tag.role{color:var(--cyan)} .tag.mvp{color:var(--violet)}
+.sp{font:700 12px/1 var(--f-mono);color:var(--fg);background:var(--chip);border-radius:6px;padding:4px 7px}
+section.epics h2{font:700 20px/1.2 var(--f-display);margin:0 0 12px}
+.elist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.epic{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.epic .t{font-weight:700} .epic .m{font:500 12px var(--f-mono);color:var(--muted);display:flex;justify-content:space-between}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+@media (max-width:900px){.board{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{max-height:none}}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--cyan)}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">НИП · chronopose · публичная доска</div>
+    <h1>Доска задач chronopose</h1>
+    <p class="lead">Детекция позы и классификация поведения в киберфизической системе. Это открытая копия доски Jira: здесь видно, что команда делает и сколько осталось до MVP 1 декабря и показа 12 декабря.</p>
+  </div>
+  <nav class="links" aria-label="Ссылки проекта">
+    <a href="https://github.com/chronopose/chronopose">Репозиторий на GitHub</a>
+    <a href="https://github.com/chronopose/chronopose/blob/main/ROLES.md">Роли команды</a>
+  </nav>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<div class="filters" role="group" aria-label="Фильтры">
+  <div class="frow"><span class="flabel">Трек</span><span id="f-track" class="frow"></span></div>
+  <div class="frow"><span class="flabel">Роль</span><span id="f-role" class="frow"></span></div>
+  <div class="frow"><span class="flabel">Этап</span><span id="f-stage" class="frow"></span>
+    <input id="q" type="search" placeholder="Поиск по задачам: «поза», SCRUM-31…" aria-label="Поиск по задачам">
+    <span class="count" id="count"></span></div>
+</div>
+
+<div class="board" id="board"></div>
+
+<section class="epics"><h2>Эпики</h2><div class="elist" id="epics"></div></section>
+
+<footer>
+  <span id="snap"></span>
+  <span>Исполнители не показаны. Обновляется по запросу руководителя проекта.</span>
+</footer>
+</div>
+
+<script>
+const DATA = [{"k":"SCRUM-1","s":"Организация и инфраструктура","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-org","role-dm"],"sp":null},{"k":"SCRUM-2","s":"Настроить проект Jira: Scrum-доска, воркфлоу, метки ролей","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","role-dm","sprint-s0"],"sp":2},{"k":"SCRUM-3","s":"Создать монорепозиторий: структура папок, README, защита main","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","mvp","mvp-w1","role-dm","sprint-mvp"],"sp":2},{"k":"SCRUM-4","s":"CI: линтер ruff, тесты pytest, сборка Docker на каждый PR","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","mvp","mvp-w1","role-web","sprint-mvp"],"sp":3},{"k":"SCRUM-5","s":"CODEOWNERS и шаблоны PR и задач","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","role-dm","sprint-s0"],"sp":1},{"k":"SCRUM-6","s":"Пакет contracts/: Pydantic-модели Observation, ActionPrediction, Event, Alert","t":"История","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","mvp","mvp-w1","role-dm","sprint-mvp"],"sp":3},{"k":"SCRUM-7","s":"docker-compose для разработки: PostgreSQL, Mosquitto, API","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","mvp","mvp-w2","role-web","sprint-mvp"],"sp":3},{"k":"SCRUM-8","s":"Подготовить показ 12.12: презентация, видео демо, репетиция","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","role-dm","sprint-s1"],"sp":3},{"k":"SCRUM-9","s":"Шаблон отчёта руководителю раз в две недели","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","role-dm","sprint-s1"],"sp":1},{"k":"SCRUM-10","s":"Н1 · Обзор и постановка","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n1","role-dm"],"sp":null},{"k":"SCRUM-11","s":"Н2 · Ядро зрения","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n2","role-cv"],"sp":null},{"k":"SCRUM-12","s":"Н3 · Классификация действий","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n3","role-ml"],"sp":null},{"k":"SCRUM-13","s":"Н4 · IoT-контур","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n4","role-iot"],"sp":null},{"k":"SCRUM-14","s":"Н5 · Слияние, события, оповещения","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n5","role-dm"],"sp":null},{"k":"SCRUM-15","s":"Н6 · Данные и эксперименты","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n6","role-ml"],"sp":null},{"k":"SCRUM-16","s":"Н7 · Отчёт и защита","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-n7","role-dm"],"sp":null},{"k":"SCRUM-17","s":"С1 · Концепция сайта","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c1","role-web"],"sp":null},{"k":"SCRUM-18","s":"С2 · Дизайн-система","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c2","role-web"],"sp":null},{"k":"SCRUM-19","s":"С3 · Фронтенд","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c3","role-web"],"sp":null},{"k":"SCRUM-20","s":"С4 · Бэкенд и API","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c4","role-web"],"sp":null},{"k":"SCRUM-21","s":"С5 · Демо-панель","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c5","role-web"],"sp":null},{"k":"SCRUM-22","s":"С6 · Контент","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c6","role-web"],"sp":null},{"k":"SCRUM-23","s":"С7 · Деплой","t":"Эпик","st":"К выполнению","c":"new","p":null,"l":["epic-c7","role-web"],"sp":null},{"k":"SCRUM-24","s":"Обзор pose estimation: OpenPifPaf, RTMPose, YOLO26-pose, MediaPipe","t":"История","st":"К выполнению","c":"new","p":"SCRUM-10","l":["epic-n1","role-cv","sprint-s0"],"sp":3},{"k":"SCRUM-25","s":"Обзор action recognition: ST-GCN, 2s-AGCN, CTR-GCN, ProtoGCN","t":"История","st":"К выполнению","c":"new","p":"SCRUM-10","l":["epic-n1","role-ml","sprint-s0"],"sp":3},{"k":"SCRUM-26","s":"Обзор IoT и слияния: MQTT, синхронизация, позднее и адаптивное слияние","t":"История","st":"К выполнению","c":"new","p":"SCRUM-10","l":["epic-n1","role-iot","sprint-s0"],"sp":3},{"k":"SCRUM-27","s":"ТЗ v1.0: требования, границы, критерии приёмки","t":"История","st":"К выполнению","c":"new","p":"SCRUM-10","l":["epic-n1","role-dm","sprint-s1"],"sp":5},{"k":"SCRUM-28","s":"Протокол эксперимента и форма согласия участников","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-10","l":["epic-n1","role-ml","sprint-s1"],"sp":2},{"k":"SCRUM-29","s":"Список литературы по ГОСТ 7.0.5","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-10","l":["epic-n1","role-dm","sprint-s2"],"sp":1},{"k":"SCRUM-30","s":"Захват видео с телефона (IP Webcam): поток, переподключение","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","mvp","mvp-w2","role-cv","sprint-mvp"],"sp":5},{"k":"SCRUM-31","s":"PoseEstimator: обёртка над YOLO26n-pose с единым интерфейсом","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","mvp","mvp-w1","role-cv","sprint-mvp"],"sp":3},{"k":"SCRUM-32","s":"Сравнить YOLO26-pose, RTMPose и OpenPifPaf на 200 своих кадрах","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","role-cv","sprint-s2"],"sp":3},{"k":"SCRUM-33","s":"Локальный трекинг ByteTrack в каждой камере","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","mvp","mvp-w2","role-cv","sprint-mvp"],"sp":3},{"k":"SCRUM-34","s":"Re-ID: эмбеддинги OSNet для треков","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","role-cv","sprint-s4"],"sp":3},{"k":"SCRUM-35","s":"Топология камер и окна времени перехода","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","role-cv","sprint-s4"],"sp":2},{"k":"SCRUM-36","s":"Global Identity Manager: венгерский алгоритм, статус «не определён»","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","role-cv","sprint-s4"],"sp":5},{"k":"SCRUM-37","s":"Калибровка и гомография плоскости пола для одной сцены","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","role-cv","sprint-s5"],"sp":3},{"k":"SCRUM-38","s":"Детекция лиц и размытие в сохраняемых кадрах","t":"История","st":"К выполнению","c":"new","p":"SCRUM-11","l":["epic-n2","role-cv","sprint-s5"],"sp":2},{"k":"SCRUM-39","s":"Skeleton Preprocessor: нормализация, маска пропусков, окна 2 с","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","mvp","mvp-w2","role-ml","sprint-mvp"],"sp":3},{"k":"SCRUM-40","s":"Классификатор MVP: «стоит / идёт / падает / лежит» — правила + Random Forest","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","mvp","mvp-w2","role-ml","sprint-mvp"],"sp":2},{"k":"SCRUM-41","s":"GRU по последовательностям скелета","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","role-ml","sprint-s4"],"sp":3},{"k":"SCRUM-42","s":"ST-GCN на NTU RGB+D (25 точек): воспроизвести базовый результат","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","role-ml","sprint-s4"],"sp":5},{"k":"SCRUM-43","s":"ST-GCN на 17 точках: дообучение на своих записях","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","role-ml","sprint-s7"],"sp":5},{"k":"SCRUM-44","s":"Агрессия: граф двух людей, обучение на RWF-2000","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","role-ml","sprint-s8"],"sp":5},{"k":"SCRUM-45","s":"Калибровка вероятностей (temperature scaling)","t":"История","st":"К выполнению","c":"new","p":"SCRUM-12","l":["epic-n3","role-ml","sprint-s8"],"sp":2},{"k":"SCRUM-46","s":"Подготовить смартфоны Android: камера (IP Webcam) и датчики (phyphox)","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","mvp","mvp-w1","role-iot","sprint-mvp"],"sp":2},{"k":"SCRUM-47","s":"Мост телефон → MQTT: акселерометр и гироскоп смартфона в топик cps/imu/{id}","t":"История","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","mvp","mvp-w2","role-iot","sprint-mvp"],"sp":5},{"k":"SCRUM-48","s":"Mosquitto с авторизацией, схема топиков cps/imu/{id}/…","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","mvp","mvp-w2","role-iot","sprint-mvp"],"sp":2},{"k":"SCRUM-49","s":"MQTT-приёмник на Python (paho-mqtt, Callback API v2)","t":"История","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","mvp","mvp-w2","role-iot","sprint-mvp"],"sp":3},{"k":"SCRUM-50","s":"Синхронизация времени телефонов, ESP32 и сервера (NTP), оценка дрейфа","t":"История","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","role-iot","sprint-s5"],"sp":3},{"k":"SCRUM-51","s":"1D-CNN по окнам IMU, предобучение на UCI HAR","t":"История","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","role-iot","sprint-s5"],"sp":3},{"k":"SCRUM-52","s":"Регистрация датчика и привязка к человеку через API","t":"История","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","role-iot","sprint-s6"],"sp":2},{"k":"SCRUM-53","s":"Совместные окна видео и IMU по меткам времени","t":"История","st":"К выполнению","c":"new","p":"SCRUM-14","l":["epic-n5","mvp","mvp-w3","role-dm","sprint-mvp"],"sp":3},{"k":"SCRUM-54","s":"Позднее слияние с флагами доступности источников","t":"История","st":"К выполнению","c":"new","p":"SCRUM-14","l":["epic-n5","mvp","mvp-w3","role-dm","sprint-mvp"],"sp":2},{"k":"SCRUM-55","s":"Адаптивный вес α по энтропии прогнозов","t":"История","st":"К выполнению","c":"new","p":"SCRUM-14","l":["epic-n5","role-dm","sprint-s7"],"sp":3},{"k":"SCRUM-56","s":"Движок событий: НОРМА → ПОДОЗРЕНИЕ → ПОДТВЕРЖДЕНО → ОПОВЕЩЕНИЕ","t":"История","st":"К выполнению","c":"new","p":"SCRUM-14","l":["epic-n5","mvp","mvp-w3","role-dm","sprint-mvp"],"sp":5},{"k":"SCRUM-57","s":"Генератор оповещений по шаблонам","t":"История","st":"К выполнению","c":"new","p":"SCRUM-14","l":["epic-n5","mvp","mvp-w3","role-dm","sprint-mvp"],"sp":2},{"k":"SCRUM-58","s":"Стенд записи: 2–3 смартфона-камеры + смартфон-IMU, общий запуск","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-iot","sprint-s5"],"sp":3},{"k":"SCRUM-59","s":"Записать свой набор: 10–12 участников × 7 действий","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-ml","sprint-s6"],"sp":8},{"k":"SCRUM-60","s":"Разметка в CVAT: начало и конец действий, ID людей","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-ml","sprint-s6"],"sp":5},{"k":"SCRUM-61","s":"Эксперимент: трекинг между камерами (IDF1, HOTA)","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-cv","sprint-s9"],"sp":3},{"k":"SCRUM-62","s":"Эксперимент: классификация RF / GRU / ST-GCN","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-ml","sprint-s9"],"sp":3},{"k":"SCRUM-63","s":"Эксперимент: вклад IMU и отказ источника","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-ml","sprint-s9"],"sp":3},{"k":"SCRUM-64","s":"Системные испытания: задержка, ложные тревоги в час, отказы","t":"История","st":"К выполнению","c":"new","p":"SCRUM-15","l":["epic-n6","role-dm","sprint-s10"],"sp":3},{"k":"SCRUM-65","s":"Отчёт по НИР: главы 1–4","t":"История","st":"К выполнению","c":"new","p":"SCRUM-16","l":["epic-n7","role-dm","sprint-s11"],"sp":8},{"k":"SCRUM-66","s":"Тезисы или статья на конференцию","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-16","l":["epic-n7","role-ml","sprint-s11"],"sp":3},{"k":"SCRUM-67","s":"Сценарий демонстрации и репетиция защиты","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-16","l":["epic-n7","role-dm","sprint-s11"],"sp":2},{"k":"SCRUM-68","s":"Аудитория и цели сайта, карта страниц","t":"История","st":"К выполнению","c":"new","p":"SCRUM-17","l":["epic-c1","role-web","sprint-s1"],"sp":2},{"k":"SCRUM-69","s":"Пользовательские сценарии демо-панели","t":"История","st":"К выполнению","c":"new","p":"SCRUM-17","l":["epic-c1","role-web","sprint-s1"],"sp":2},{"k":"SCRUM-70","s":"Токены дизайна из презентации: цвета, шрифты, сетка","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-18","l":["epic-c2","role-web","sprint-s2"],"sp":2},{"k":"SCRUM-71","s":"Макеты страниц в Figma","t":"История","st":"К выполнению","c":"new","p":"SCRUM-18","l":["epic-c2","role-web","sprint-s2"],"sp":3},{"k":"SCRUM-72","s":"Каркас сайта: роутинг, вёрстка главной","t":"История","st":"К выполнению","c":"new","p":"SCRUM-19","l":["epic-c3","role-web","sprint-s3"],"sp":3},{"k":"SCRUM-73","s":"Страницы «Методы», «Команда», «Результаты»","t":"История","st":"К выполнению","c":"new","p":"SCRUM-19","l":["epic-c3","role-web","sprint-s4"],"sp":5},{"k":"SCRUM-74","s":"Анимация скелетов на главной (canvas)","t":"История","st":"К выполнению","c":"new","p":"SCRUM-19","l":["epic-c3","role-web","sprint-s6"],"sp":3},{"k":"SCRUM-75","s":"Схема PostgreSQL и миграции Alembic","t":"История","st":"К выполнению","c":"new","p":"SCRUM-20","l":["epic-c4","role-web","sprint-s4"],"sp":3},{"k":"SCRUM-76","s":"REST API: камеры, люди, события, датчики","t":"История","st":"К выполнению","c":"new","p":"SCRUM-20","l":["epic-c4","mvp","mvp-w3","role-web","sprint-mvp"],"sp":5},{"k":"SCRUM-77","s":"WebSocket /ws/events для живых событий","t":"История","st":"К выполнению","c":"new","p":"SCRUM-20","l":["epic-c4","mvp","mvp-w3","role-web","sprint-mvp"],"sp":2},{"k":"SCRUM-78","s":"Видео со скелетом и номерами людей","t":"История","st":"К выполнению","c":"new","p":"SCRUM-21","l":["epic-c5","mvp","mvp-w3","role-web","sprint-mvp"],"sp":5},{"k":"SCRUM-79","s":"Журнал событий и карточка оповещения","t":"История","st":"К выполнению","c":"new","p":"SCRUM-21","l":["epic-c5","mvp","mvp-w3","role-web","sprint-mvp"],"sp":3},{"k":"SCRUM-80","s":"Статус камер и датчиков","t":"История","st":"К выполнению","c":"new","p":"SCRUM-21","l":["epic-c5","role-web","sprint-s7"],"sp":2},{"k":"SCRUM-81","s":"Тексты и схемы для страниц сайта","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-22","l":["epic-c6","role-dm","sprint-s8"],"sp":3},{"k":"SCRUM-82","s":"Документация API и инструкция запуска","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-22","l":["epic-c6","role-web","sprint-s10"],"sp":2},{"k":"SCRUM-83","s":"Деплой сайта и API: хостинг, домен, HTTPS","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-23","l":["epic-c7","role-web","sprint-s8"],"sp":3},{"k":"SCRUM-84","s":"Мониторинг и логи сервиса","t":"Задача","st":"К выполнению","c":"new","p":"SCRUM-23","l":["epic-c7","role-web","sprint-s10"],"sp":2},{"k":"SCRUM-85","s":"ESP32 как исполнитель: сигнал тревоги по MQTT","t":"История","st":"К выполнению","c":"new","p":"SCRUM-13","l":["epic-n4","mvp","mvp-w3","role-iot","sprint-mvp"],"sp":2},{"k":"SCRUM-86","s":"MVP-демо: сквозной сценарий «падение → оповещение» на одной камере","t":"История","st":"К выполнению","c":"new","p":"SCRUM-1","l":["epic-org","mvp","mvp-w3","role-dm","sprint-mvp"],"sp":3}];
+const SNAP = "11.11.2026";
+const ROLE = {"role-dm":"DM","role-cv":"CV","role-ml":"ML","role-iot":"IoT","role-web":"WEB"};
+const COLS = [["new","К выполнению"],["indeterminate","В работе"],["done","Готово"]];
+const epics = DATA.filter(i => i.t === "Эпик");
+const items = DATA.filter(i => i.t !== "Эпик");
+const epicByKey = Object.fromEntries(epics.map(e => [e.k, e]));
+function track(i){ const l = (i.l||[]).find(x => x.startsWith("epic-")) || "";
+  return l === "epic-org" ? "org" : l.startsWith("epic-n") ? "nir" : l.startsWith("epic-c") ? "site" : "org"; }
+function role(i){ const l = (i.l||[]).find(x => ROLE[x]); return l ? ROLE[l] : null; }
+const isMvp = i => (i.l||[]).includes("mvp");
+const pts = arr => arr.reduce((s,i) => s + (i.sp || 0), 0);
+const done = arr => arr.filter(i => i.c === "done");
+const state = {track:"all", role:"all", stage:"all", q:""};
+try { Object.assign(state, JSON.parse(localStorage.getItem("cp-board") || "{}"), {q:""}); } catch(e) {}
+
+function chips(id, key, opts){
+  const box = document.getElementById(id); box.innerHTML = "";
+  for (const [v, label] of opts){
+    const b = document.createElement("button"); b.type = "button"; b.className = "fb"; b.id = id + "-" + v;
+    b.textContent = label; b.setAttribute("aria-pressed", String(state[key] === v));
+    b.onclick = () => { state[key] = v; try{localStorage.setItem("cp-board", JSON.stringify({track:state.track,role:state.role,stage:state.stage}))}catch(e){}; render(); };
+    box.appendChild(b);
+  }
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function stat(k, v, s, frac){
+  return `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div>` +
+         (frac != null ? `<div class="bar" aria-hidden="true"><i style="width:${Math.round(frac*100)}%"></i></div>` : "") + `</div>`;
+}
+function render(){
+  chips("f-track","track",[["all","Все"],["nir","НИР"],["site","Сайт"],["org","Организация"]]);
+  chips("f-role","role",[["all","Все"],["DM","DM"],["CV","CV"],["ML","ML"],["IoT","IoT"],["WEB","WEB"]]);
+  chips("f-stage","stage",[["all","Весь проект"],["mvp","MVP к 1.12"]]);
+  const q = state.q.trim().toLowerCase();
+  const shown = items.filter(i =>
+    (state.track === "all" || track(i) === state.track) &&
+    (state.role === "all" || role(i) === state.role) &&
+    (state.stage === "all" || isMvp(i)) &&
+    (!q || i.s.toLowerCase().includes(q) || i.k.toLowerCase().includes(q)));
+  const mvp = items.filter(isMvp);
+  document.getElementById("stats").innerHTML =
+    stat("Задач", items.length, `${done(items).length} готово · ${epics.length} эпиков`, done(items).length/items.length) +
+    stat("Объём", pts(items) + " SP", `${pts(done(items))} SP закрыто`, pts(done(items))/(pts(items)||1)) +
+    stat("MVP к 1 декабря", `${done(mvp).length} / ${mvp.length}`, `${pts(mvp)} SP в трёх неделях`, done(mvp).length/(mvp.length||1)) +
+    stat("До показа 12.12", daysTo("2026-12-12") + " дн.", `до MVP — ${daysTo("2026-12-01")} дн.`, null);
+  document.getElementById("count").textContent = `${shown.length} из ${items.length}`;
+  document.getElementById("board").innerHTML = COLS.map(([c, name]) => {
+    const list = shown.filter(i => i.c === c);
+    const body = list.length ? list.map(card).join("") : `<div class="empty">${c === "new" ? "Нет задач под фильтр" : "Пока пусто"}</div>`;
+    return `<div class="col"><h2>${name}<span>${list.length} · ${pts(list)} SP</span></h2><div class="cards">${body}</div></div>`;
+  }).join("");
+  document.getElementById("epics").innerHTML = epics.filter(e => state.track === "all" || track(e) === state.track).map(e => {
+    const ch = items.filter(i => i.p === e.k), d = done(ch);
+    return `<div class="epic"><div class="m"><span>${e.k}</span><span>${d.length}/${ch.length} · ${pts(ch)} SP</span></div>
+      <div class="t">${esc(e.s)}</div><div class="bar" aria-hidden="true"><i style="width:${ch.length?Math.round(d.length/ch.length*100):0}%"></i></div></div>`;
+  }).join("");
+}
+function card(i){
+  const r = role(i), ep = epicByKey[i.p];
+  const tags = [r ? `<span class="tag role">${r}</span>` : "", isMvp(i) ? `<span class="tag mvp">MVP</span>` : "",
+    ep ? `<span class="tag">${esc(ep.s)}</span>` : ""].join("");
+  return `<article class="card"><div class="top"><span>${i.k} · ${esc(i.t)}</span>${i.sp != null ? `<span class="sp">${i.sp} SP</span>` : ""}</div>
+    <div class="sum">${esc(i.s)}</div><div class="tags">${tags}</div></article>`;
+}
+function daysTo(d){ return Math.max(0, Math.ceil((new Date(d + "T00:00:00+03:00") - Date.now()) / 864e5)); }
+document.getElementById("q").addEventListener("input", e => { state.q = e.target.value; render(); });
+document.getElementById("snap").textContent = "Снимок Jira (проект SCRUM) от " + SNAP;
+render();
+</script>
+
+</body>
+</html>
