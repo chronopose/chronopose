@@ -43,7 +43,8 @@ tests/        pytest
 ## Локально
 
 ```bash
-pip install pytest ruff
+pip install -r requirements-dev.txt
+pre-commit install               # проверки перед каждым коммитом
 ruff check .
 pytest -q
 python scripts/eval_gate.py      # качество на записях: полнота, ложные тревоги, задержка

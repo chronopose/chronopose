@@ -78,7 +78,8 @@ def _mqtt_publisher(host: str):
     cli = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="replay")
     cli.connect(host, 1883)
     cli.loop_start()
-    return lambda ev: cli.publish("cps/alerts", json.dumps({"text": render(ev), "person": ev.person}, ensure_ascii=False))
+    return lambda ev: cli.publish(
+        "cps/alerts", json.dumps({"text": render(ev), "person": ev.person}, ensure_ascii=False))
 
 
 def main(argv: list[str] | None = None) -> int:

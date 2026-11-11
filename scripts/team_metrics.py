@@ -47,14 +47,17 @@ def ci_health(runs: list[dict], days: int, now: datetime | None = None) -> dict:
 
 
 def report(m: dict, days: int, ci: dict | None = None) -> str:
-    ci_line = (f"CI: {ci['runs']} запусков, упало {ci['failed']} ({round(ci['fail_rate'] * 100)} %). Цель — меньше 10 %.\n"
-               if ci and ci["runs"] else "")
+    ci_line = ""
+    if ci and ci["runs"]:
+        pct = round(ci["fail_rate"] * 100)
+        ci_line = f"CI: {ci['runs']} запусков, упало {ci['failed']} ({pct} %). Цель — меньше 10 %.\n"
     if not m["merged"]:
         return f"## Метрики команды за {days} дн.\n\nСлитых PR нет.\n\n{ci_line}"
     authors = ", ".join(f"@{a}: {n}" for a, n in m["by_author"].items())
     return (f"## Метрики команды за {days} дн.\n\n"
             f"| Слито PR | Медиана до слияния | Медианный размер | PR > 400 строк |\n| --- | --- | --- | --- |\n"
-            f"| {m['merged']} | {m['median_hours_to_merge']} ч | {m['median_pr_size']} строк | {m['big_prs_over_400']} |\n\n"
+            f"| {m['merged']} | {m['median_hours_to_merge']} ч | {m['median_pr_size']} строк "
+            f"| {m['big_prs_over_400']} |\n\n"
             f"По авторам: {authors}\n\n{ci_line}\nЦели: медиана до слияния < 24 ч, размер < 300 строк.\n")
 
 

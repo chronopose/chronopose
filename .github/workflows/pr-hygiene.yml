@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   check:
+    # PR Dependabot ключа задачи не имеют — пропускаем (пропуск засчитывается как успех)
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Ключ задачи Jira

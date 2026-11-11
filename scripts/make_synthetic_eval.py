@@ -44,7 +44,8 @@ SCENARIOS = [
     scenario("fall_no_imu", 30, falls=[10.0], imu=False, note="датчик молчит — решает только видео"),
     scenario("two_falls", 40, falls=[8.0, 24.0], note="два падения подряд, после каждого — подъём"),
     scenario("walk_only", 40, spikes=[(15.0, 0.68)], note="ходьба, один ложный всплеск на одном окне"),
-    scenario("sit_down", 30, spikes=[(9.0, 0.63), (9.5, 0.66)], imu=False, note="резко сел на стул: два окна выше порога"),
+    scenario("sit_down", 30, spikes=[(9.0, 0.63), (9.5, 0.66)], imu=False,
+             note="резко сел на стул: два окна выше порога"),
 ]
 
 

@@ -2,3 +2,4 @@
 pytest
 ruff
 mlflow
+pre-commit

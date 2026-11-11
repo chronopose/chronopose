@@ -79,7 +79,8 @@ def render_md(state: dict) -> str:
     rows = ["| Роль | Зона | Владелец | Задача | Коммит | Дата |", "| --- | --- | --- | --- | --- | --- |"]
     for role, slot in state["roles"].items():
         owner = f"@{slot['owner']}" if slot["owner"] else "свободна"
-        rows.append(f"| {role} | {ROLE_TITLES[role]} | {owner} | {slot['task'] or '—'} | {slot['commit'] or '—'} | {slot['date'] or '—'} |")
+        cells = [role, ROLE_TITLES[role], owner, slot["task"] or "—", slot["commit"] or "—", slot["date"] or "—"]
+        rows.append("| " + " | ".join(cells) + " |")
     return (
         "# Роли в команде\n\n"
         "Роль получает тот, кто **первым закрыл задачу этой роли** из Jira.\n"

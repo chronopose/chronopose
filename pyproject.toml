@@ -2,5 +2,12 @@
 line-length = 120
 target-version = "py39"  # у части команды локально Python 3.9; CI — 3.11
 
+[tool.ruff.lint]
+# Набор правил фиксирован, чтобы локальный ruff, pre-commit и CI проверяли одно и то же
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*.py" = ["E402"]  # скрипты добавляют корень проекта в sys.path до импортов
+
 [tool.pytest.ini_options]
 pythonpath = ["."]

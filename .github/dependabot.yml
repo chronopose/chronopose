@@ -1,0 +1,18 @@
+# Раз в неделю Dependabot предлагает PR с обновлением зависимостей и действий GitHub.
+# Обновления безопасности приходят сразу, без расписания.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels: [deps]
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels: [deps]
