@@ -1,10 +1,10 @@
 # Генерируется scripts/claim_role.py — руками не править.
 # Последнее совпадение важнее, поэтому общее правило «*» идёт первым.
-# * — роль DM свободна
-# /docs/ — роль DM свободна
-# /.github/ — роль DM свободна
-# /src/events/ — роль DM свободна
-# /src/fusion/ — роль DM свободна
+* @chronopose
+/docs/ @chronopose
+/.github/ @chronopose
+/src/events/ @chronopose
+/src/fusion/ @chronopose
 # /src/vision/ — роль CV свободна
 # /src/tracking/ — роль CV свободна
 # /src/models/ — роль ML свободна
