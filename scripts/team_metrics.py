@@ -38,22 +38,34 @@ def summarize(prs: list[dict], days: int, now: datetime | None = None) -> dict:
     }
 
 
-def report(m: dict, days: int) -> str:
+def ci_health(runs: list[dict], days: int, now: datetime | None = None) -> dict:
+    """Доля упавших запусков CI за период. Вход — `gh run list --workflow ci --json conclusion,createdAt`."""
+    now = now or datetime.now(timezone.utc)
+    recent = [r for r in runs if r.get("conclusion") and ts(r["createdAt"]) >= now - timedelta(days=days)]
+    failed = sum(r["conclusion"] == "failure" for r in recent)
+    return {"runs": len(recent), "failed": failed, "fail_rate": round(failed / len(recent), 2) if recent else 0.0}
+
+
+def report(m: dict, days: int, ci: dict | None = None) -> str:
+    ci_line = (f"CI: {ci['runs']} запусков, упало {ci['failed']} ({round(ci['fail_rate'] * 100)} %). Цель — меньше 10 %.\n"
+               if ci and ci["runs"] else "")
     if not m["merged"]:
-        return f"## Метрики команды за {days} дн.\n\nСлитых PR нет.\n"
+        return f"## Метрики команды за {days} дн.\n\nСлитых PR нет.\n\n{ci_line}"
     authors = ", ".join(f"@{a}: {n}" for a, n in m["by_author"].items())
     return (f"## Метрики команды за {days} дн.\n\n"
             f"| Слито PR | Медиана до слияния | Медианный размер | PR > 400 строк |\n| --- | --- | --- | --- |\n"
             f"| {m['merged']} | {m['median_hours_to_merge']} ч | {m['median_pr_size']} строк | {m['big_prs_over_400']} |\n\n"
-            f"По авторам: {authors}\n\nЦели: медиана до слияния < 24 ч, размер < 300 строк.\n")
+            f"По авторам: {authors}\n\n{ci_line}\nЦели: медиана до слияния < 24 ч, размер < 300 строк.\n")
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("prs_json")
+    p.add_argument("--runs", help="JSON из gh run list --workflow ci --json conclusion,createdAt")
     p.add_argument("--days", type=int, default=7)
     a = p.parse_args(argv)
-    text = report(summarize(json.loads(Path(a.prs_json).read_text(encoding="utf-8")), a.days), a.days)
+    ci = ci_health(json.loads(Path(a.runs).read_text(encoding="utf-8")), a.days) if a.runs else None
+    text = report(summarize(json.loads(Path(a.prs_json).read_text(encoding="utf-8")), a.days), a.days, ci)
     print(text)
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:

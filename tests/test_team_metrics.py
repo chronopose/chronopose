@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from scripts.team_metrics import report, summarize
+from scripts.team_metrics import ci_health, report, summarize
 
 NOW = datetime(2026, 11, 20, tzinfo=timezone.utc)
 PRS = [
@@ -24,3 +24,13 @@ def test_summary_counts_last_week_only():
 
 def test_empty_week():
     assert "нет" in report(summarize([], 7, NOW), 7)
+
+
+def test_ci_fail_rate():
+    runs = [{"conclusion": "success", "createdAt": "2026-11-19T10:00:00Z"},
+            {"conclusion": "failure", "createdAt": "2026-11-18T10:00:00Z"},
+            {"conclusion": "failure", "createdAt": "2026-11-01T10:00:00Z"},  # старше недели
+            {"conclusion": "", "createdAt": "2026-11-19T11:00:00Z"}]         # ещё идёт
+    ci = ci_health(runs, 7, NOW)
+    assert ci == {"runs": 2, "failed": 1, "fail_rate": 0.5}
+    assert "упало 1 (50 %)" in report(summarize(PRS, 7, NOW), 7, ci)

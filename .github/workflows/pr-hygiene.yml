@@ -1,0 +1,36 @@
+name: pr-hygiene
+
+# PR связан с задачей Jira (ключ SCRUM-123 в ветке или заголовке) и не раздут.
+# Ключ нужен, чтобы приложение GitHub for Jira показало ветку, коммиты и PR прямо в задаче.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ключ задачи Jira
+        env:
+          BRANCH: ${{ github.head_ref }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$BRANCH $TITLE" | grep -Eq 'SCRUM-[0-9]+'; then
+            echo "Задача: $(echo "$BRANCH $TITLE" | grep -Eo 'SCRUM-[0-9]+' | head -1)"
+          else
+            echo "::error::Нет ключа задачи. Назовите ветку feat/SCRUM-123-кратко или добавьте SCRUM-123 в заголовок PR."
+            exit 1
+          fi
+      - name: Размер PR
+        env:
+          ADDED: ${{ github.event.pull_request.additions }}
+          DELETED: ${{ github.event.pull_request.deletions }}
+        run: |
+          total=$((ADDED + DELETED))
+          echo "Изменено строк: $total"
+          if [ "$total" -gt 400 ]; then
+            echo "::warning::PR на $total строк. Ревью до суток проходит PR до ~300 строк — подумайте, как разрезать."
+          fi

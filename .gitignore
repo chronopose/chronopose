@@ -5,3 +5,6 @@ __pycache__/
 data/
 *.mp4
 models/*.pt
+mlruns/
+mlartifacts/
+ai-review.md

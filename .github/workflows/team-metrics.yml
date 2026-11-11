@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  actions: read
 
 jobs:
   metrics:
@@ -23,4 +24,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr list --state merged --limit 200 --json number,author,createdAt,mergedAt,additions,deletions > prs.json
-          python scripts/team_metrics.py prs.json --days 7
+          gh run list --workflow ci --limit 200 --json conclusion,createdAt > runs.json
+          python scripts/team_metrics.py prs.json --runs runs.json --days 7
