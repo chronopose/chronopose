@@ -7,6 +7,7 @@
 - **Задачи:** Jira, проект SCRUM на chronopose.atlassian.net.
 - **Роли:** [ROLES.md](ROLES.md) — заполняется автоматически.
 - **Железо:** только то, что есть — Android-смартфоны и одна ESP32.
+- **Как работаем:** [docs/process.md](docs/process.md) — PR, ревью, гейт качества, релизы. Цели — [docs/okr.md](docs/okr.md), решения — [docs/adr/](docs/adr/).
 
 ## Как взять роль
 
@@ -30,10 +31,11 @@
 ## Структура
 
 ```
-src/          код системы (events, alerts, iot, …)
+src/          код системы (events, alerts, iot, replay)
 firmware/     скетч ESP32
-scripts/      служебные скрипты (claim_role.py)
-docs/         MVP, решения (ADR)
+eval/         записи для прогона и база метрик
+scripts/      роли, гейт качества, метрики команды
+docs/         MVP, процесс, OKR, ADR, шаблоны (дизайн, статус, постмортем, карточка модели)
 tests/        pytest
 .github/      CI и захват ролей
 ```
@@ -42,5 +44,8 @@ tests/        pytest
 
 ```bash
 pip install pytest ruff
+ruff check .
 pytest -q
+python scripts/eval_gate.py      # качество на записях: полнота, ложные тревоги, задержка
+python -m src.replay eval/recordings/fall_with_imu.jsonl   # прогон «падение → оповещение» без железа
 ```

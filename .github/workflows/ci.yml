@@ -14,5 +14,9 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install ruff pytest
-      - run: ruff check .
-      - run: pytest -q
+      - name: Стиль
+        run: ruff check .
+      - name: Тесты и прогон «падение → оповещение» по записи
+        run: pytest -q
+      - name: Гейт качества (полнота, ложные тревоги, задержка ≤ 4 с)
+        run: python scripts/eval_gate.py

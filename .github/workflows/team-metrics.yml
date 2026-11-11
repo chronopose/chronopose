@@ -1,0 +1,26 @@
+name: team-metrics
+
+# Каждую пятницу в 15:00 МСК — сводка по слитым PR в Summary этого запуска. Цифры идут в статус недели.
+on:
+  schedule:
+    - cron: "7 12 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Собрать PR и посчитать
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr list --state merged --limit 200 --json number,author,createdAt,mergedAt,additions,deletions > prs.json
+          python scripts/team_metrics.py prs.json --days 7

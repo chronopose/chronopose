@@ -11,7 +11,7 @@ class Event:
     t_start: float
     confidence: float
     imu_confirmed: bool
-    zone: str = "зона A"
+    zone: str = "A"
 
 
 @dataclass

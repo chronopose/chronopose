@@ -22,6 +22,16 @@ ROOT = Path(__file__).resolve().parents[1]
 TASK_ROLES = ROOT / ".github" / "roles" / "task_roles.json"
 ROLES_STATE = ROOT / ".github" / "roles" / "roles.json"
 ROLES_MD = ROOT / "ROLES.md"
+CODEOWNERS = ROOT / ".github" / "CODEOWNERS"
+
+# Какие папки ревьюит владелец роли. Пока роль свободна, строка закомментирована.
+ROLE_PATHS = {
+    "DM": ["*", "/docs/", "/.github/", "/src/events/", "/src/fusion/"],
+    "CV": ["/src/vision/", "/src/tracking/"],
+    "ML": ["/src/models/", "/eval/", "/scripts/eval_gate.py"],
+    "IoT": ["/src/iot/", "/firmware/"],
+    "WEB": ["/src/api/", "/web/"],
+}
 
 DONE_RE = re.compile(r"^\s*Task-Done:\s*((?:[A-Z][A-Z0-9]+-\d+)(?:\s*,\s*[A-Z][A-Z0-9]+-\d+)*)\s*$", re.MULTILINE)
 
@@ -80,6 +90,17 @@ def render_md(state: dict) -> str:
     )
 
 
+def render_codeowners(state: dict) -> str:
+    """CODEOWNERS из таблицы ролей: GitHub сам зовёт владельца роли на ревью PR."""
+    lines = ["# Генерируется scripts/claim_role.py — руками не править.",
+             "# Последнее совпадение важнее, поэтому общее правило «*» идёт первым."]
+    for role, paths in ROLE_PATHS.items():
+        owner = state["roles"][role]["owner"]
+        for path in paths:
+            lines.append(f"{path} @{owner}" if owner else f"# {path} — роль {role} свободна")
+    return "\n".join(lines) + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--event", help="путь к JSON события push из GitHub Actions")
@@ -106,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         log += apply_commit(state, task_roles, msg, author, sha, today)
     ROLES_STATE.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     ROLES_MD.write_text(render_md(state), encoding="utf-8")
+    CODEOWNERS.write_text(render_codeowners(state), encoding="utf-8")
     print("\n".join(log) or "Строк Task-Done не найдено")
     return 0
 

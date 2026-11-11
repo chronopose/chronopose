@@ -1,5 +1,6 @@
 [tool.ruff]
 line-length = 120
+target-version = "py39"  # у части команды локально Python 3.9; CI — 3.11
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

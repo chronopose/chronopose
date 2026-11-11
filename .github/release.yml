@@ -1,0 +1,13 @@
+# Разделы автоматических заметок к релизу. Метку на PR ставит автор.
+changelog:
+  exclude:
+    authors: [roles-bot]
+  categories:
+    - title: Система
+      labels: [cv, ml, iot, events]
+    - title: Сайт и демо
+      labels: [web]
+    - title: Процесс и документы
+      labels: [docs, process]
+    - title: Прочее
+      labels: ["*"]

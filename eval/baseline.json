@@ -1,0 +1,8 @@
+{
+  "recordings": 5,
+  "falls": 4,
+  "recall": 1.0,
+  "false_alarms": 0,
+  "latency_max_s": 1.5,
+  "latency_mean_s": 1.125
+}

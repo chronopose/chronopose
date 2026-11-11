@@ -18,18 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Если main защищена правилами, бот пушит токеном владельца из секрета (см. docs/process.md, раздел 3).
+          token: ${{ secrets.ROLES_BOT_TOKEN || github.token }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Обновить роли
         run: python scripts/claim_role.py --event "$GITHUB_EVENT_PATH"
-      - name: Закоммитить ROLES.md
+      - name: Закоммитить ROLES.md и CODEOWNERS
         run: |
-          if git diff --quiet -- ROLES.md .github/roles/roles.json; then
+          if git diff --quiet -- ROLES.md .github/roles/roles.json .github/CODEOWNERS; then
             echo "Роли не изменились"; exit 0
           fi
           git config user.name "roles-bot"
           git config user.email "roles-bot@users.noreply.github.com"
-          git add ROLES.md .github/roles/roles.json
+          git add ROLES.md .github/roles/roles.json .github/CODEOWNERS
           git commit -m "Обновить ROLES.md [roles-bot]"
           git push
