@@ -121,6 +121,7 @@ function track(i){ const l = (i.l||[]).find(x => x.startsWith("epic-")) || "";
   return l === "epic-org" ? "org" : l.startsWith("epic-n") ? "nir" : l.startsWith("epic-c") ? "site" : "org"; }
 function role(i){ const l = (i.l||[]).find(x => ROLE[x]); return l ? ROLE[l] : null; }
 const isMvp = i => (i.l||[]).includes("mvp");
+function eb(n){ const a=n%10, b=n%100; const w = (a===1&&b!==11) ? "Е-бал" : (a>=2&&a<=4&&(b<12||b>14)) ? "Е-бала" : "Е-балов"; return n + " " + w; }
 const pts = arr => arr.reduce((s,i) => s + (i.sp || 0), 0);
 const done = arr => arr.filter(i => i.c === "done");
 const state = {track:"all", role:"all", stage:"all", q:""};
@@ -153,18 +154,18 @@ function render(){
   const mvp = items.filter(isMvp);
   document.getElementById("stats").innerHTML =
     stat("Задач", items.length, `${done(items).length} готово · ${epics.length} эпиков`, done(items).length/items.length) +
-    stat("Объём", pts(items) + " SP", `${pts(done(items))} SP закрыто`, pts(done(items))/(pts(items)||1)) +
-    stat("MVP к 1 декабря", `${done(mvp).length} / ${mvp.length}`, `${pts(mvp)} SP в трёх неделях`, done(mvp).length/(mvp.length||1)) +
+    stat("Объём", eb(pts(items)), `${eb(pts(done(items)))} закрыто`, pts(done(items))/(pts(items)||1)) +
+    stat("MVP к 1 декабря", `${done(mvp).length} / ${mvp.length}`, `${eb(pts(mvp))} на три недели`, done(mvp).length/(mvp.length||1)) +
     stat("До показа 12.12", daysTo("2026-12-12") + " дн.", `до MVP — ${daysTo("2026-12-01")} дн.`, null);
   document.getElementById("count").textContent = `${shown.length} из ${items.length}`;
   document.getElementById("board").innerHTML = COLS.map(([c, name]) => {
     const list = shown.filter(i => i.c === c);
     const body = list.length ? list.map(card).join("") : `<div class="empty">${c === "new" ? "Нет задач под фильтр" : "Пока пусто"}</div>`;
-    return `<div class="col"><h2>${name}<span>${list.length} · ${pts(list)} SP</span></h2><div class="cards">${body}</div></div>`;
+    return `<div class="col"><h2>${name}<span>${list.length} · ${eb(pts(list))}</span></h2><div class="cards">${body}</div></div>`;
   }).join("");
   document.getElementById("epics").innerHTML = epics.filter(e => state.track === "all" || track(e) === state.track).map(e => {
     const ch = items.filter(i => i.p === e.k), d = done(ch);
-    return `<div class="epic"><div class="m"><span>${e.k}</span><span>${d.length}/${ch.length} · ${pts(ch)} SP</span></div>
+    return `<div class="epic"><div class="m"><span>${e.k}</span><span>${d.length}/${ch.length} · ${eb(pts(ch))}</span></div>
       <div class="t">${esc(e.s)}</div><div class="bar" aria-hidden="true"><i style="width:${ch.length?Math.round(d.length/ch.length*100):0}%"></i></div></div>`;
   }).join("");
 }
@@ -172,7 +173,7 @@ function card(i){
   const r = role(i), ep = epicByKey[i.p];
   const tags = [r ? `<span class="tag role">${r}</span>` : "", isMvp(i) ? `<span class="tag mvp">MVP</span>` : "",
     ep ? `<span class="tag">${esc(ep.s)}</span>` : ""].join("");
-  return `<article class="card"><div class="top"><span>${i.k} · ${esc(i.t)}</span>${i.sp != null ? `<span class="sp">${i.sp} SP</span>` : ""}</div>
+  return `<article class="card"><div class="top"><span>${i.k} · ${esc(i.t)}</span>${i.sp != null ? `<span class="sp">${eb(i.sp)}</span>` : ""}</div>
     <div class="sum">${esc(i.s)}</div><div class="tags">${tags}</div></article>`;
 }
 function daysTo(d){ return Math.max(0, Math.ceil((new Date(d + "T00:00:00+03:00") - Date.now()) / 864e5)); }
