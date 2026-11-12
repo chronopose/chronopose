@@ -21,7 +21,7 @@ jobs:
         with:
           # Если main защищена правилами, бот пушит токеном владельца из секрета (см. docs/process.md, раздел 3).
           token: ${{ secrets.ROLES_BOT_TOKEN || github.token }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Обновить роли
