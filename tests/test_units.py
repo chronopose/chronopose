@@ -122,3 +122,38 @@ def test_store_roundtrip():
     rows = st.list()
     assert rows[0]["id"] == ev.id and rows[0]["imu_confirmed"] is None
     assert st.get(ev.id)["confidence"] == 0.9 and st.get("missing") is None
+
+
+def test_window_tensor_shape_and_missing_mask():
+    from src.models.preprocess import window_tensor
+
+    sc, buf = SyntheticScene([Actor(1, 100, 40.0)]), SkeletonBuffer()
+    for obs in sc.frames(3.0, fps=15):
+        p = obs.people[0]
+        if 1.4 < obs.t < 1.8:          # человек пропал из кадра на 0,4 с
+            continue
+        kps = list(p.keypoints)
+        kps[0] = (kps[0][0], kps[0][1], 0.1)  # нос не виден
+        buf.add(obs.t, p.model_copy(update={"keypoints": kps}))
+    x = window_tensor(buf.window(2.9), 2.9)
+    assert x.shape == (3, 30, 17)
+    assert (x[2, :, 0] == 0).all()                    # невидимая точка — нулевая уверенность
+    assert (x[2].sum(axis=1) == 0).sum() >= 3         # пропущенные шаги целиком нулевые
+    assert abs(float(x[1, -1, 11] + x[1, -1, 12])) < 1e-3  # бёдра в центре координат
+    assert window_tensor([], 1.0).shape == (3, 30, 17)
+
+
+def test_forest_training_runs_and_beats_chance(tmp_path):
+    import json
+
+    from scripts import train_classifier as tc
+    from src.models.classifier import ForestClassifier
+
+    out = tmp_path / "rf.joblib"
+    metrics = tmp_path / "metrics.json"
+    assert tc.main(["--scenes", "40", "--out", str(out), "--metrics", str(metrics)]) == 0
+    clf = ForestClassifier(str(out))
+    f = scene_features(Actor(1, 100, 40.0, fall_at=3.0), 4.0)
+    assert max(clf.predict_proba(f), key=clf.predict_proba(f).get) == "fall"
+    m = json.loads(metrics.read_text(encoding="utf-8"))
+    assert m["macro_f1"]["forest"] > 0.5

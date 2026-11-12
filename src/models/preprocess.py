@@ -62,7 +62,7 @@ class SkeletonBuffer:
             self.frames.popleft()
 
     def window(self, t_end: float, length: float = 2.0) -> List[Frame]:
-        return [f for f in self.frames if t_end - length <= f.t <= t_end]
+        return [f for f in self.frames if t_end - length - 1e-6 <= f.t <= t_end + 1e-6]
 
 
 def features(window: List[Frame], length: float = 2.0) -> Optional[Dict[str, float]]:
@@ -102,3 +102,28 @@ def features(window: List[Frame], length: float = 2.0) -> Optional[Dict[str, flo
 
 def feature_vector(f: Dict[str, float]) -> List[float]:
     return [f[k] for k in FEATURES]
+
+
+def window_tensor(window: List[Frame], t_end: float, length: float = 2.0, steps: int = 30) -> np.ndarray:
+    """Окно как тензор 3×T×17 для графовых сетей (ST-GCN): каналы x, y, уверенность.
+
+    Время равномерно делится на T шагов (15 кадр/с × 2 с = 30); на каждый шаг берётся ближайший кадр.
+    Координаты нормализованы по туловищу (normalize). Пропуски — нули с уверенностью 0,
+    кадров нет совсем — весь шаг нулевой. Так сеть видит маску пропусков, а не мусор.
+    """
+    out = np.zeros((3, steps, 17), dtype=np.float32)
+    if not window:
+        return out
+    times = np.array([f.t for f in window])
+    grid = np.linspace(t_end - length, t_end, steps)
+    max_gap = length / steps * 1.5
+    for i, t in enumerate(grid):
+        j = int(np.argmin(np.abs(times - t)))
+        if abs(times[j] - t) > max_gap:
+            continue
+        n = normalize(window[j].kps)
+        ok = ~np.isnan(n[:, 0])
+        out[0, i, ok] = n[ok, 0]
+        out[1, i, ok] = n[ok, 1]
+        out[2, i, ok] = window[j].kps[ok, 2]
+    return out

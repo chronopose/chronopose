@@ -10,3 +10,4 @@ mlartifacts/
 ai-review.md
 infra/mosquitto/passwd
 .env
+models/*.joblib

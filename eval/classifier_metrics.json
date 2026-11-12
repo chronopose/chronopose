@@ -1,0 +1,86 @@
+{
+  "data": "synthetic",
+  "train_windows": 3425,
+  "val_windows": 1139,
+  "val_split": "по сценам (участникам)",
+  "macro_f1": {
+    "forest": 0.958,
+    "rules": 0.894
+  },
+  "confusion": {
+    "forest": {
+      "labels": [
+        "stand",
+        "walk",
+        "fall",
+        "lie"
+      ],
+      "matrix": [
+        [
+          604,
+          4,
+          0,
+          0
+        ],
+        [
+          50,
+          212,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          107,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          160
+        ]
+      ]
+    },
+    "rules": {
+      "labels": [
+        "stand",
+        "walk",
+        "fall",
+        "lie"
+      ],
+      "matrix": [
+        [
+          585,
+          0,
+          0,
+          23
+        ],
+        [
+          66,
+          196,
+          0,
+          0
+        ],
+        [
+          0,
+          21,
+          88,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          160
+        ]
+      ]
+    }
+  },
+  "class_counts_val": {
+    "stand": 608,
+    "walk": 262,
+    "fall": 109,
+    "lie": 160
+  }
+}
