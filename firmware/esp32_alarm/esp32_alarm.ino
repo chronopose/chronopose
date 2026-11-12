@@ -8,6 +8,8 @@
 const char* WIFI_SSID = "YOUR_WIFI";       // заполнить локально, не коммитить
 const char* WIFI_PASS = "YOUR_PASSWORD";
 const char* MQTT_HOST = "192.168.1.10";    // ноутбук с Mosquitto
+const char* MQTT_USER = "esp32";           // пользователь из infra/mosquitto/acl
+const char* MQTT_PASS = "YOUR_ESP32_PASSWORD";
 const int   LED_PIN   = 2;
 
 WiFiClient net;
@@ -21,7 +23,7 @@ void onMessage(char* topic, byte* payload, unsigned int len) {
 
 void reconnect() {
   while (!mqtt.connected()) {
-    if (mqtt.connect("esp32_01")) {
+    if (mqtt.connect("esp32_01", MQTT_USER, MQTT_PASS)) {
       mqtt.subscribe("cps/alerts");
       mqtt.publish("cps/actuators/esp32_01/status", "online", true);
     } else {

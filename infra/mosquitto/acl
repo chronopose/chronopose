@@ -1,0 +1,11 @@
+# Кто что может публиковать и читать. Пользователи создаются скриптом infra/mosquitto/make_passwd.sh
+user server
+topic readwrite cps/#
+
+user phone
+topic write cps/imu/+/telemetry
+topic write cps/imu/+/status
+
+user esp32
+topic read cps/alerts
+topic write cps/actuators/#

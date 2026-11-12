@@ -1,0 +1,3 @@
+# Реальная камера: YOLO26n-pose + ByteTrack. Модель скачается при первом запуске.
+-r requirements.txt
+ultralytics>=8.3

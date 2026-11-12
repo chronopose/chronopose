@@ -1,0 +1,43 @@
+# Окружение разработки и демо (SCRUM-7): Mosquitto + PostgreSQL + сервер.
+#   cp .env.example .env  &&  sh infra/mosquitto/make_passwd.sh  &&  docker compose up --build
+# Пульт: http://localhost:8000. Телефоны подключаются к MQTT по IP ноутбука, порт 1883.
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    ports: ["1883:1883"]
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./infra/mosquitto/passwd:/mosquitto/config/passwd:ro
+      - ./infra/mosquitto/acl:/mosquitto/config/acl:ro
+      - mqtt-data:/mosquitto/data
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: chronopose
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте в .env}
+      POSTGRES_DB: chronopose
+    volumes: [db-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chronopose"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build: { context: ., args: { VISION: "${VISION:-0}" } }
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql://chronopose:${POSTGRES_PASSWORD}@db:5432/chronopose
+      MQTT_USER: server
+      MQTT_PASSWORD: ${MQTT_PASSWORD:?задайте в .env}
+      APP_ARGS: ${APP_ARGS:---synthetic --mqtt mqtt}
+    depends_on:
+      db: { condition: service_healthy }
+      mqtt: { condition: service_started }
+    restart: unless-stopped
+
+volumes:
+  mqtt-data:
+  db-data:

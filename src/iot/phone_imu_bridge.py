@@ -4,7 +4,7 @@
 phyphox отдаёт данные по HTTP: http://<ip телефона>:8080/get?<буфер>=<с какого времени>.
 Имена буферов зависят от эксперимента — проверьте их в phyphox и поправьте configs/devices.yaml.
 
-Запуск: python -m src.iot.phone_imu_bridge --phone 192.168.1.23 --device imu_001
+Запуск: MQTT_USER=phone MQTT_PASSWORD=… python -m src.iot.phone_imu_bridge --phone 192.168.1.23 --device imu_001
 """
 from __future__ import annotations
 
@@ -25,17 +25,15 @@ def poll(phone: str, buffers: dict[str, str], since: float) -> dict[str, list[fl
 
 
 def run(phone: str, device: str, broker: str, period: float = 0.2) -> None:
-    import paho.mqtt.client as mqtt  # pip install paho-mqtt
+    from src.bus import MqttBus  # логин и пароль — MQTT_USER=phone, MQTT_PASSWORD
 
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    client.connect(broker)
-    client.loop_start()
+    bus = MqttBus(broker, client_id=f"bridge-{device}")
     since, seq = 0.0, 0
     while True:
         try:
             b = poll(phone, DEFAULT_BUFFERS, since)
         except OSError as e:
-            client.publish(f"cps/imu/{device}/status", json.dumps({"ok": False, "error": str(e)}), qos=1)
+            bus.publish(f"cps/imu/{device}/status", {"ok": False, "error": str(e)})
             time.sleep(1)
             continue
         for i, t in enumerate(b["t"]):
@@ -45,7 +43,7 @@ def run(phone: str, device: str, broker: str, period: float = 0.2) -> None:
                    "gyro": [b["gx"][i] if i < len(b["gx"]) else None,
                             b["gy"][i] if i < len(b["gy"]) else None,
                             b["gz"][i] if i < len(b["gz"]) else None]}
-            client.publish(f"cps/imu/{device}/telemetry", json.dumps(msg), qos=0)
+            bus.publish(f"cps/imu/{device}/telemetry", msg)
         if b["t"]:
             since = b["t"][-1]
         time.sleep(period)

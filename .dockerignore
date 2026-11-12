@@ -1,0 +1,9 @@
+.git
+.venv
+data
+mlruns
+**/__pycache__
+docs
+eval
+tests
+firmware

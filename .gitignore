@@ -8,3 +8,5 @@ models/*.pt
 mlruns/
 mlartifacts/
 ai-review.md
+infra/mosquitto/passwd
+.env

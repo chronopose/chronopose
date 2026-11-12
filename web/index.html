@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>chronopose — пульт</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Пульт оператора: видео слева, тревога и люди справа, журнал снизу. Тёмная тема — для зала с проектором. */
+:root { --bg:#05070D; --panel:#0B1222; --line:#1C2A44; --fg:#EAF2FF; --muted:#9DB0CF; --cyan:#2DE2FF; --violet:#A99BFF;
+  --ok:#43D68C; --warn:#FFB547; --bad:#FF4D6D; --f-d:'Unbounded',Arial,sans-serif; --f-b:'Manrope',Arial,sans-serif; --f-m:'JetBrains Mono',Consolas,monospace; color-scheme:dark; }
+* { box-sizing:border-box }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 var(--f-b);
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:16px 24px; }
+header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; margin-bottom:16px }
+h1 { font:700 22px/1 var(--f-d); margin:0; letter-spacing:-.01em } h1 span { color:var(--cyan) }
+.chips { display:flex; flex-wrap:wrap; gap:8px }
+.chip { display:flex; align-items:center; gap:8px; font:600 12px/1 var(--f-m); letter-spacing:.06em; text-transform:uppercase;
+  padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:var(--panel); color:var(--muted) }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--muted) }
+.chip.on .dot { background:var(--ok); box-shadow:0 0 10px var(--ok) } .chip.on { color:var(--fg) }
+.chip.off .dot { background:var(--bad) }
+.grid { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:16px; align-items:start }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px; min-width:0 }
+.card h2 { font:600 12px/1 var(--f-m); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:2px 2px 12px; display:flex; justify-content:space-between }
+.video { position:relative; aspect-ratio:4/3; max-width:100%; background:#000; border-radius:10px; overflow:hidden; display:grid; place-items:center }
+.video img { width:100%; height:100%; object-fit:contain; display:block }
+.video .ph { position:absolute; color:var(--muted); font-size:14px }
+.side { display:flex; flex-direction:column; gap:16px; min-width:0 }
+#alert { border-radius:16px; padding:18px; border:1px solid var(--line); background:var(--panel); transition:background .3s, border-color .3s }
+#alert .k { font:700 12px/1 var(--f-m); letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+#alert .txt { font:700 20px/1.3 var(--f-b); margin-top:10px }
+#alert .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px }
+#alert .tag { font:600 12px/1 var(--f-m); padding:6px 9px; border-radius:6px; background:rgba(255,255,255,.08) }
+#alert.active { background:linear-gradient(135deg, rgba(255,77,109,.28), rgba(255,77,109,.08)); border-color:var(--bad) }
+#alert.active .k { color:var(--bad) }
+@media (prefers-reduced-motion:no-preference) { #alert.pulse { animation:pulse 1s ease-in-out 4 } }
+@keyframes pulse { 50% { box-shadow:0 0 0 6px rgba(255,77,109,.35) } }
+.ack { all:unset; cursor:pointer; margin-top:14px; font:700 13px var(--f-b); padding:9px 14px; border-radius:999px; background:var(--fg); color:#05070D }
+.ack:focus-visible { outline:2px solid var(--cyan); outline-offset:2px }
+.person { display:grid; grid-template-columns:auto 1fr auto; gap:6px 12px; align-items:center; padding:10px 4px; border-top:1px solid var(--line) }
+.person:first-of-type { border-top:none }
+.pid { font:700 15px var(--f-m) }
+.act { font:700 12px/1 var(--f-m); text-transform:uppercase; letter-spacing:.06em; padding:6px 9px; border-radius:6px; background:rgba(45,226,255,.12); color:var(--cyan); justify-self:end }
+.act.fall { background:rgba(255,77,109,.18); color:var(--bad) } .act.lie { background:rgba(255,181,71,.15); color:var(--warn) }
+.bar { grid-column:1/-1; height:6px; background:#0F1A30; border-radius:99px; overflow:hidden }
+.bar i { display:block; height:100%; background:linear-gradient(90deg,var(--cyan),var(--bad)); transition:width .3s }
+.small { font:500 12px var(--f-m); color:var(--muted) }
+.empty { color:var(--muted); padding:8px 4px }
+.log { overflow-x:auto }
+table { width:100%; border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums }
+th { text-align:left; font:600 11px/1 var(--f-m); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line) }
+td { padding:10px; border-bottom:1px solid var(--line); vertical-align:top }
+tr.new td { background:rgba(255,77,109,.08) }
+.btn { all:unset; cursor:pointer; font:600 12px var(--f-m); color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:7px 11px }
+.btn:hover, .btn:focus-visible { color:var(--fg); border-color:var(--cyan) }
+@media (max-width:900px) { .grid { grid-template-columns:1fr } }
+</style>
+</head>
+<body>
+<header>
+  <h1>chronopose <span>/ пульт</span></h1>
+  <div class="chips" aria-live="polite">
+    <span class="chip" id="c-cam"><i class="dot"></i><span>Камера</span></span>
+    <span class="chip" id="c-imu"><i class="dot"></i><span>Датчик</span></span>
+    <span class="chip" id="c-esp"><i class="dot"></i><span>ESP32</span></span>
+    <span class="chip" id="c-ws"><i class="dot"></i><span>Связь</span></span>
+    <button class="btn" id="sound" type="button">Звук: выкл</button>
+  </div>
+</header>
+
+<div class="grid">
+  <section class="card" aria-label="Видео">
+    <h2><span>Камера <span id="cam-id">cam_01</span></span><span id="fps">— к/с</span></h2>
+    <div class="video"><span class="ph" id="ph">Ждём кадры…</span><img id="stream" alt="Видео с камеры со скелетами людей"></div>
+  </section>
+  <div class="side">
+    <section id="alert" aria-live="assertive">
+      <div class="k" id="alert-k">Тревог нет</div>
+      <div class="txt" id="alert-txt">Система наблюдает. Оповещение появится здесь меньше чем через 4 секунды после падения.</div>
+      <div class="meta" id="alert-meta"></div>
+      <button class="ack" id="ack" type="button" hidden>Принято</button>
+    </section>
+    <section class="card" aria-label="Люди в кадре">
+      <h2><span>Люди в кадре</span><span id="n-people">0</span></h2>
+      <div id="people"><div class="empty">Никого не видно</div></div>
+    </section>
+  </div>
+</div>
+
+<section class="card log" style="margin-top:16px" aria-label="Журнал событий">
+  <h2><span>Журнал событий</span><span id="n-events">0</span></h2>
+  <table>
+    <thead><tr><th>Время</th><th>Кто</th><th>Где</th><th>Видео</th><th>Датчик</th><th>Оповещение</th></tr></thead>
+    <tbody id="events"><tr><td colspan="6" class="empty">Событий пока нет</td></tr></tbody>
+  </table>
+</section>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const ACT = { stand: "стоит", walk: "идёт", fall: "падает", lie: "лежит" };
+const IMU = { true: "подтвердил удар", false: "удара нет", null: "нет данных" };
+const STATE = { NORMAL: "норма", SUSPECTED: "подозрение", ALERT_SENT: "тревога отправлена" };
+const fmt = (t) => new Date(t * 1000).toLocaleTimeString("ru-RU");
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let camId = "cam_01", sound = false, audio = null, seen = new Set();
+
+function chip(id, on, label) { const c = $(id); c.className = "chip " + (on === null ? "" : on ? "on" : "off"); if (label) c.lastElementChild.textContent = label; }
+
+async function poll() {
+  try {
+    const [cams, people, sensors] = await Promise.all(["/api/cameras", "/api/people", "/api/sensors"].map((u) => fetch(u).then((r) => r.json())));
+    const cam = cams[0];
+    if (cam) {
+      if (cam.id !== camId || !$("stream").src) { camId = cam.id; $("cam-id").textContent = camId; $("stream").src = `/api/cameras/${camId}/stream`; }
+      chip("c-cam", cam.connected, cam.source === "synthetic" ? "Камера · синтетика" : "Камера");
+      $("fps").textContent = `${cam.fps.toFixed(1)} к/с`;
+    }
+    const imu = sensors.imu[0];
+    chip("c-imu", imu ? imu.online : false, imu ? `Датчик · ${imu.rate_hz} Гц` : "Датчик · нет");
+    const esp = sensors.actuators[0];
+    chip("c-esp", esp ? !!esp.online : null, esp ? "ESP32" : "ESP32 · нет данных");
+    $("n-people").textContent = people.length;
+    $("people").innerHTML = people.length ? people.map((p) => {
+      const pf = (p.probs.fall || 0) * 100;
+      const hit = p.fused && p.fused.imu_peak && (p.action === "fall" || p.action === "lie");
+      return `<div class="person"><span class="pid">${esc(p.person)}</span><span class="small">${hit ? "удар по датчику" : (STATE[p.state] || esc(p.state))}</span>
+        <span class="act ${esc(p.action)}">${ACT[p.action] || esc(p.action)}</span>
+        <div class="bar" title="Вероятность падения ${pf.toFixed(0)} %"><i style="width:${pf}%"></i></div></div>`;
+    }).join("") : '<div class="empty">Никого не видно</div>';
+  } catch (e) { chip("c-cam", false); }
+}
+
+async function loadEvents() {
+  const rows = await fetch("/api/events?limit=30").then((r) => r.json()).catch(() => []);
+  $("n-events").textContent = rows.length;
+  $("events").innerHTML = rows.length ? rows.map((e) => `<tr class="${seen.has(e.id) ? "" : "new"}"><td>${fmt(e.t_start)}</td><td>${esc(e.person)}</td>
+    <td>${esc(e.camera_id)} · зона ${esc(e.zone)}</td><td>${Math.round(e.confidence * 100)} %</td><td>${IMU[e.imu_confirmed]}</td><td>${esc(e.text)}</td></tr>`).join("")
+    : '<tr><td colspan="6" class="empty">Событий пока нет</td></tr>';
+  rows.forEach((e) => seen.add(e.id));
+}
+
+function showAlert(a) {
+  const box = $("alert");
+  box.className = "active pulse";
+  $("alert-k").textContent = `Тревога · ${fmt(a.t)}`;
+  $("alert-txt").textContent = a.text;
+  $("alert-meta").innerHTML = [`${esc(a.person)}`, `${esc(a.camera_id)} · зона ${esc(a.zone)}`, `видео ${Math.round(a.confidence * 100)} %`, `датчик: ${IMU[a.imu_confirmed]}`]
+    .map((t) => `<span class="tag">${t}</span>`).join("");
+  $("ack").hidden = false;
+  if (sound) beep();
+  loadEvents();
+}
+$("ack").onclick = () => { $("alert").className = ""; $("alert-k").textContent = "Тревог нет"; $("alert-txt").textContent = "Оповещение принято. Система продолжает наблюдение."; $("alert-meta").innerHTML = ""; $("ack").hidden = true; };
+
+function beep() {
+  try { audio = audio || new AudioContext(); const o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = 880; g.gain.value = 0.12;
+    o.connect(g).connect(audio.destination); o.start(); o.stop(audio.currentTime + 0.5); } catch (e) {}
+}
+$("sound").onclick = () => { sound = !sound; $("sound").textContent = `Звук: ${sound ? "вкл" : "выкл"}`; if (sound) beep(); };
+
+function connect() {
+  const ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws/events");
+  ws.onopen = () => chip("c-ws", true, "Связь");
+  ws.onmessage = (m) => { const d = JSON.parse(m.data); if (d.type === "alert") showAlert(d.alert); };
+  ws.onclose = () => { chip("c-ws", false, "Связь · переподключение"); setTimeout(connect, 1500); };
+}
+$("stream").onload = () => { $("ph").hidden = true; };
+connect(); poll(); loadEvents(); setInterval(poll, 700); setInterval(loadEvents, 5000);
+</script>
+</body>
+</html>

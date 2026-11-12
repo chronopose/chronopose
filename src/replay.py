@@ -58,7 +58,7 @@ def run(rec: Recording, engine: FallEngine | None = None, on_alert=None, realtim
         if realtime and prev_t is not None:
             time.sleep(max(0.0, w["t"] - prev_t))
         prev_t = w["t"]
-        ev = eng.step(w["t"], float(w["p_fall"]), bool(w.get("imu_peak")))
+        ev = eng.step(w["t"], float(w["p_fall"]), w.get("imu_peak"))
         if ev:
             res.alerts.append((w["t"], ev))
             if on_alert:

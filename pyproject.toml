@@ -5,6 +5,8 @@ target-version = "py39"  # у части команды локально Python 
 [tool.ruff.lint]
 # Набор правил фиксирован, чтобы локальный ruff, pre-commit и CI проверяли одно и то же
 select = ["E", "F", "I", "UP", "B"]
+# List/Optional вместо list/X | None: Pydantic на Python 3.9 вычисляет аннотации и не понимает новый синтаксис
+ignore = ["UP006", "UP035", "UP045"]
 
 [tool.ruff.lint.per-file-ignores]
 "scripts/*.py" = ["E402"]  # скрипты добавляют корень проекта в sys.path до импортов

@@ -10,6 +10,15 @@
 - **Железо:** только то, что есть — Android-смартфоны и одна ESP32.
 - **Как работаем:** [docs/process.md](docs/process.md) — PR, ревью, гейт качества, релизы. Цели — [docs/okr.md](docs/okr.md), решения — [docs/adr/](docs/adr/).
 
+## Быстрый старт
+
+```bash
+pip install -r requirements-dev.txt
+python -m src.app --synthetic          # пульт на http://localhost:8000, железо не нужно
+```
+
+Реальная система с телефонами и ESP32 — [docs/run.md](docs/run.md).
+
 ## Как взять роль
 
 Роли пока не распределены. **Кто первым закроет задачу роли, тот её и забирает.**
