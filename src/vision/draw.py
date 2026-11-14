@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 from src.contracts import ACTION_RU, SKELETON_EDGES, Observation
 
-CYAN, RED, WHITE = (255, 226, 45), (60, 60, 255), (240, 240, 240)  # BGR
+CYAN, RED, WHITE = (225, 235, 239), (0, 61, 242), (225, 235, 239)  # BGR: бумага, оранжевый
 
 
 def draw_overlay(img, obs: Observation, labels: Optional[Dict[int, str]] = None,
@@ -21,7 +21,8 @@ def draw_overlay(img, obs: Observation, labels: Optional[Dict[int, str]] = None,
                 cv2.line(img, (int(k[a][0]), int(k[a][1])), (int(k[b][0]), int(k[b][1])), col, 3, cv2.LINE_AA)
         for x, y, c in k[5:]:
             if c >= min_conf:
-                cv2.circle(img, (int(x), int(y)), 4, WHITE, -1, cv2.LINE_AA)
+                cv2.circle(img, (int(x), int(y)), 4, (12, 14, 14), -1, cv2.LINE_AA)
+                cv2.circle(img, (int(x), int(y)), 4, col, 2, cv2.LINE_AA)
         x1, y1, x2, y2 = (int(v) for v in p.bbox)
         cv2.rectangle(img, (x1, y1), (x2, y2), col, 1)
         act = labels.get(p.track_id, "")

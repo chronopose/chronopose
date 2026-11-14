@@ -4,62 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>chronopose — пульт</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@700;800;900&family=Golos+Text:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&family=Old+Standard+TT:ital@1&display=swap">
 <style>
-/* Пульт оператора: видео слева, тревога и люди справа, журнал снизу. Тёмная тема — для зала с проектором. */
-:root { --bg:#05070D; --panel:#0B1222; --line:#1C2A44; --fg:#EAF2FF; --muted:#9DB0CF; --cyan:#2DE2FF; --violet:#A99BFF;
-  --ok:#43D68C; --warn:#FFB547; --bad:#FF4D6D; --f-d:'Unbounded',Arial,sans-serif; --f-b:'Manrope',Arial,sans-serif; --f-m:'JetBrains Mono',Consolas,monospace; color-scheme:dark; }
+/* Пульт в стиле хронофотографии Маре: бумага, тушь, один оранжевый акцент. Видео — «фотопластинка».
+   Один светлый вид: читается на проекторе в светлой аудитории. */
+:root { --paper:#EFEBE1; --ink:#0E0E0C; --muted:#55524B; --orange:#F23D00; --rust:#B83000; --blue:#1B2FE0;
+  --f-d:'Sofia Sans Extra Condensed','Arial Narrow',Arial,sans-serif; --f-b:'Golos Text',Arial,sans-serif;
+  --f-m:'Martian Mono','Courier New',monospace; --f-s:'Old Standard TT',Georgia,serif; color-scheme:light; }
 * { box-sizing:border-box }
-body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 var(--f-b);
-  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:16px 24px; }
-header { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; margin-bottom:16px }
-h1 { font:700 22px/1 var(--f-d); margin:0; letter-spacing:-.01em } h1 span { color:var(--cyan) }
-.chips { display:flex; flex-wrap:wrap; gap:8px }
-.chip { display:flex; align-items:center; gap:8px; font:600 12px/1 var(--f-m); letter-spacing:.06em; text-transform:uppercase;
-  padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:var(--panel); color:var(--muted) }
-.dot { width:8px; height:8px; border-radius:50%; background:var(--muted) }
-.chip.on .dot { background:var(--ok); box-shadow:0 0 10px var(--ok) } .chip.on { color:var(--fg) }
-.chip.off .dot { background:var(--bad) }
-.grid { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:16px; align-items:start }
-.card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px; min-width:0 }
-.card h2 { font:600 12px/1 var(--f-m); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:2px 2px 12px; display:flex; justify-content:space-between }
-.video { position:relative; aspect-ratio:4/3; max-width:100%; background:#000; border-radius:10px; overflow:hidden; display:grid; place-items:center }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.45 var(--f-b);
+  padding-left:max(20px,env(safe-area-inset-left,0px)); padding-right:max(20px,env(safe-area-inset-right,0px)); padding-block:18px 28px; }
+header { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:10px 24px; padding-bottom:12px; border-bottom:2px solid var(--ink); margin-bottom:18px }
+h1 { font:900 54px/.85 var(--f-d); text-transform:uppercase; margin:0; letter-spacing:-.5px }
+h1 span { font:italic 400 30px/1 var(--f-s); text-transform:none; color:var(--rust); letter-spacing:0 }
+.chips { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center }
+.chip { display:flex; align-items:center; gap:8px; font:500 12px/1 var(--f-m); letter-spacing:.04em; text-transform:uppercase; color:var(--muted) }
+.dot { width:10px; height:10px; border:2px solid var(--ink); background:transparent }
+.chip.on { color:var(--ink) } .chip.on .dot { background:var(--ink) }
+.chip.off { color:var(--rust) } .chip.off .dot { border-color:var(--orange); background:var(--orange) }
+.grid { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:28px; align-items:start }
+.card { min-width:0 }
+.card h2 { font:500 12px/1 var(--f-m); letter-spacing:.08em; text-transform:uppercase; color:var(--ink); margin:0 0 10px; padding-top:10px; border-top:2px solid var(--ink); display:flex; justify-content:space-between }
+.video { position:relative; aspect-ratio:4/3; max-width:100%; background:var(--ink); overflow:hidden; display:grid; place-items:center }
 .video img { width:100%; height:100%; object-fit:contain; display:block }
-.video .ph { position:absolute; color:var(--muted); font-size:14px }
-.side { display:flex; flex-direction:column; gap:16px; min-width:0 }
-#alert { border-radius:16px; padding:18px; border:1px solid var(--line); background:var(--panel); transition:background .3s, border-color .3s }
-#alert .k { font:700 12px/1 var(--f-m); letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
-#alert .txt { font:700 20px/1.3 var(--f-b); margin-top:10px }
-#alert .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px }
-#alert .tag { font:600 12px/1 var(--f-m); padding:6px 9px; border-radius:6px; background:rgba(255,255,255,.08) }
-#alert.active { background:linear-gradient(135deg, rgba(255,77,109,.28), rgba(255,77,109,.08)); border-color:var(--bad) }
-#alert.active .k { color:var(--bad) }
-@media (prefers-reduced-motion:no-preference) { #alert.pulse { animation:pulse 1s ease-in-out 4 } }
-@keyframes pulse { 50% { box-shadow:0 0 0 6px rgba(255,77,109,.35) } }
-.ack { all:unset; cursor:pointer; margin-top:14px; font:700 13px var(--f-b); padding:9px 14px; border-radius:999px; background:var(--fg); color:#05070D }
-.ack:focus-visible { outline:2px solid var(--cyan); outline-offset:2px }
-.person { display:grid; grid-template-columns:auto 1fr auto; gap:6px 12px; align-items:center; padding:10px 4px; border-top:1px solid var(--line) }
-.person:first-of-type { border-top:none }
-.pid { font:700 15px var(--f-m) }
-.act { font:700 12px/1 var(--f-m); text-transform:uppercase; letter-spacing:.06em; padding:6px 9px; border-radius:6px; background:rgba(45,226,255,.12); color:var(--cyan); justify-self:end }
-.act.fall { background:rgba(255,77,109,.18); color:var(--bad) } .act.lie { background:rgba(255,181,71,.15); color:var(--warn) }
-.bar { grid-column:1/-1; height:6px; background:#0F1A30; border-radius:99px; overflow:hidden }
-.bar i { display:block; height:100%; background:linear-gradient(90deg,var(--cyan),var(--bad)); transition:width .3s }
-.small { font:500 12px var(--f-m); color:var(--muted) }
-.empty { color:var(--muted); padding:8px 4px }
-.log { overflow-x:auto }
-table { width:100%; border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums }
-th { text-align:left; font:600 11px/1 var(--f-m); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line) }
-td { padding:10px; border-bottom:1px solid var(--line); vertical-align:top }
-tr.new td { background:rgba(255,77,109,.08) }
-.btn { all:unset; cursor:pointer; font:600 12px var(--f-m); color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:7px 11px }
-.btn:hover, .btn:focus-visible { color:var(--fg); border-color:var(--cyan) }
-@media (max-width:900px) { .grid { grid-template-columns:1fr } }
+.video .ph { position:absolute; color:var(--paper); font:500 13px var(--f-m) }
+.side { display:flex; flex-direction:column; gap:22px; min-width:0 }
+#alert { padding:16px 18px 18px; border:2px solid var(--ink) }
+#alert .k { font:500 12px/1 var(--f-m); letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+#alert .txt { font:600 21px/1.3 var(--f-b); margin-top:10px }
+#alert .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px }
+#alert .tag { font:500 12px/1 var(--f-m); padding:6px 8px; border:1.5px solid var(--ink) }
+#alert.active { background:var(--orange) } #alert.active .k { color:var(--ink) }
+@media (prefers-reduced-motion:no-preference) { #alert.pulse { animation:pulse .5s steps(2) 6 } }
+@keyframes pulse { 50% { background:var(--paper) } }
+.ack { all:unset; cursor:pointer; margin-top:14px; font:500 13px var(--f-m); text-transform:uppercase; letter-spacing:.06em; padding:10px 14px; background:var(--ink); color:var(--paper) }
+.ack:focus-visible { outline:2px solid var(--blue); outline-offset:2px }
+.person { display:grid; grid-template-columns:auto 1fr auto; gap:6px 12px; align-items:baseline; padding:10px 0; border-top:1px solid var(--ink) }
+.person:first-of-type { border-top:none; padding-top:0 }
+.pid { font:800 30px/1 var(--f-d) }
+.act { font:800 26px/1 var(--f-d); text-transform:uppercase; justify-self:end }
+.act.fall { color:var(--orange); -webkit-text-stroke:.6px var(--ink) } .act.lie { color:var(--rust) }
+.bar { grid-column:1/-1; height:8px; border:1.5px solid var(--ink) }
+.bar i { display:block; height:100%; background:var(--orange); transition:width .3s }
+.small { font:400 12px var(--f-m); color:var(--muted) }
+.empty { color:var(--muted); padding:6px 0 }
+.log { overflow-x:auto; margin-top:26px }
+table { width:100%; border-collapse:collapse; font-size:15px; font-variant-numeric:tabular-nums }
+th { text-align:left; font:500 11px/1 var(--f-m); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:8px 10px 8px 0; border-bottom:2px solid var(--ink) }
+td { padding:10px 10px 10px 0; border-bottom:1px solid var(--ink); vertical-align:top }
+tr.new td:first-child { box-shadow:inset 4px 0 0 var(--orange); padding-left:12px }
+.btn { all:unset; cursor:pointer; font:500 12px var(--f-m); text-transform:uppercase; letter-spacing:.04em; color:var(--ink); border:1.5px solid var(--ink); padding:6px 10px }
+.btn:hover, .btn:focus-visible { background:var(--ink); color:var(--paper) }
+@media (max-width:900px) { .grid { grid-template-columns:1fr } h1 { font-size:40px } }
 </style>
 </head>
 <body>
 <header>
-  <h1>chronopose <span>/ пульт</span></h1>
+  <h1>chronopose <span>пульт оператора</span></h1>
   <div class="chips" aria-live="polite">
     <span class="chip" id="c-cam"><i class="dot"></i><span>Камера</span></span>
     <span class="chip" id="c-imu"><i class="dot"></i><span>Датчик</span></span>
@@ -88,7 +89,7 @@ tr.new td { background:rgba(255,77,109,.08) }
   </div>
 </div>
 
-<section class="card log" style="margin-top:16px" aria-label="Журнал событий">
+<section class="card log" aria-label="Журнал событий">
   <h2><span>Журнал событий</span><span id="n-events">0</span></h2>
   <table>
     <thead><tr><th>Время</th><th>Кто</th><th>Где</th><th>Видео</th><th>Датчик</th><th>Оповещение</th></tr></thead>

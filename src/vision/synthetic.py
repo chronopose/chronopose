@@ -102,11 +102,11 @@ class SyntheticScene:
         import cv2
         import numpy as np
 
-        img = np.full((self.height, self.width, 3), (22, 16, 12), np.uint8)
+        img = np.full((self.height, self.width, 3), (12, 14, 14), np.uint8)
         for x in range(0, self.width, 40):
-            cv2.line(img, (x, 0), (x, self.height), (40, 32, 26), 1)
-        cv2.line(img, (0, int(self.floor_y) + 2), (self.width, int(self.floor_y) + 2), (90, 80, 70), 2)
-        cv2.putText(img, "SYNTHETIC CAMERA", (12, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (120, 110, 100), 1, cv2.LINE_AA)
+            cv2.line(img, (x, 0), (x, self.height), (30, 32, 32), 1)
+        cv2.line(img, (0, int(self.floor_y) + 2), (self.width, int(self.floor_y) + 2), (225, 235, 239), 2)
+        cv2.putText(img, "SYNTHETIC CAMERA", (12, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (150, 156, 158), 1, cv2.LINE_AA)
         return img
 
 
