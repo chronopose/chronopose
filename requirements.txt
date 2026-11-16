@@ -2,7 +2,7 @@
 numpy>=1.26
 opencv-python-headless>=4.9
 pydantic>=2.6
-fastapi>=0.110
+fastapi>=0.162.7
 uvicorn[standard]>=0.29
 paho-mqtt>=2.2.0
 psycopg[binary]>=3.1
