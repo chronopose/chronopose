@@ -1,5 +1,5 @@
 # Сервер MVP. Нейросеть позы — отдельно: requirements-vision.txt (тянет PyTorch, ~2 ГБ).
-numpy>=1.26
+numpy>=2.5.4
 opencv-python-headless>=4.9
 pydantic>=2.6
 fastapi>=0.110
