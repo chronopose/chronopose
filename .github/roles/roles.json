@@ -19,10 +19,10 @@
       "date": "2026-11-15"
     },
     "IoT": {
-      "owner": null,
-      "task": null,
-      "commit": null,
-      "date": null
+      "owner": "LugBurz23",
+      "task": "SCRUM-48",
+      "commit": "9cf1b46",
+      "date": "2026-11-27"
     },
     "WEB": {
       "owner": "Kebuzya",
@@ -51,6 +51,11 @@
       "by": "Kebuzya",
       "commit": "cd4f35d",
       "date": "2026-11-24"
+    },
+    "SCRUM-48": {
+      "by": "LugBurz23",
+      "commit": "063e803",
+      "date": "2026-11-27"
     }
   }
 }
