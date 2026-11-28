@@ -10,7 +10,7 @@
 /src/models/ @aylanall
 /eval/ @aylanall
 /scripts/eval_gate.py @aylanall
-# /src/iot/ — роль IoT свободна
-# /firmware/ — роль IoT свободна
+/src/iot/ @LugBurz23
+/firmware/ @LugBurz23
 /src/api/ @Kebuzya
 /web/ @Kebuzya

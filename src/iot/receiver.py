@@ -40,10 +40,11 @@ class ImuReceiver:
 
     def on_status(self, topic: str, payload: dict) -> None:
         device = topic.split("/")[2]
-        if payload.get("ok") is False:
-            self.errors[device] = str(payload.get("error", "ошибка"))
-        else:
-            self.errors.pop(device, None)
+        with self._lock:
+            if payload.get("ok") is False:
+                self.errors[device] = str(payload.get("error", "ошибка"))
+            else:
+                self.errors.pop(device, None)
 
     def add(self, s: ImuSample) -> None:
         mag = math.sqrt(sum(v * v for v in s.acc))
@@ -71,10 +72,11 @@ class ImuReceiver:
     def status(self) -> Dict[str, dict]:
         now = self.clock()
         out = {}
-        for d in sorted(set(self.last_seen) | set(self.errors)):
-            q = self.samples.get(d, ())
-            recent = [t for t, _ in q if now - t <= 2.0]
-            out[d] = {"device_id": d, "online": self.online(d), "last_seen": self.last_seen.get(d),
-                      "rate_hz": round(len(recent) / 2.0, 1), "samples": self.count.get(d, 0),
-                      "error": self.errors.get(d)}
+        with self._lock:
+            for d in sorted(set(self.last_seen) | set(self.errors)):
+                q = self.samples.get(d, ())
+                recent = [t for t, _ in q if now - t <= 2.0]
+                out[d] = {"device_id": d, "online": self.online(d), "last_seen": self.last_seen.get(d),
+                          "rate_hz": round(len(recent) / 2.0, 1), "samples": self.count.get(d, 0),
+                          "error": self.errors.get(d)}
         return out
