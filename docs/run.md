@@ -13,6 +13,16 @@ python -m src.app --synthetic --port 8000
 
 > На Windows порт 8000 иногда занят системой — возьмите `--port 8077`.
 
+Команды для PowerShell с Python 3.11:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m src.app --synthetic --host 127.0.0.1 --port 8077
+```
+
+Для работы с реальной камерой добавьте `-r requirements-vision.txt` к команде установки зависимостей.
+
 Проверка восстановления оповещений (SCRUM-77):
 
 1. Дождитесь тревоги, затем обновите страницу: последняя тревога восстановится без звука и мигания.
